@@ -1103,8 +1103,139 @@
     .pill-fill.warn   { background: #ffd166; }
     .pill-fill.danger { background: var(--accent2); }
 
-    /* LOADING */
-    .spinner {
+    /* ============================================================
+       MOBILE RESPONSIVE — جميع أحجام الشاشات
+    ============================================================ */
+
+    /* ناف بار للموبايل */
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 14px;
+        height: auto;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 14px;
+      }
+
+      .nav-brand span { font-size: 15px; }
+
+      .nav-tabs { order: 3; width: 100%; justify-content: center; }
+      .nav-tab  { flex: 1; text-align: center; padding: 8px 10px; font-size: 13px; }
+
+      .nav-right { gap: 8px; }
+      .nav-storage-pill { padding: 4px 8px; font-size: 11px; }
+      .nav-storage-pill .pill-bar { width: 36px; }
+      #nav-pill-text { display: none; }
+
+      #nav-username { display: none; }
+      .user-btn { padding: 5px 8px; }
+
+      .logout-btn { padding: 6px 10px; font-size: 12px; }
+
+      main { padding: 16px 12px; }
+
+      /* صفحة التحويل */
+      .page-title    { font-size: 20px; }
+      .page-subtitle { font-size: 12px; margin-bottom: 16px; }
+
+      .converter-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+      }
+
+      .card { padding: 18px 14px; }
+      .card-title { font-size: 14px; }
+
+      /* منطقة الرفع */
+      .upload-zone { padding: 28px 14px; }
+      .upload-icon { font-size: 32px; }
+      .upload-zone h3 { font-size: 14px; }
+      .upload-zone p  { font-size: 11px; }
+
+      /* ألوان الباركود */
+      .color-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .color-field { padding: 10px; }
+      .preset { width: 18px; height: 18px; }
+
+      /* الإخراج */
+      #qr-output canvas, #qr-output img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+
+      .export-row { flex-wrap: wrap; gap: 5px; }
+      .action-btns-row { flex-direction: column; }
+      .action-btns-row .btn-secondary,
+      .action-btns-row .btn-save { width: 100%; }
+
+      /* إحصائيات */
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .stat-value { font-size: 22px; }
+
+      /* Storage meter */
+      .storage-card { padding: 16px 14px; }
+      .storage-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .storage-numbers { font-size: 15px; }
+
+      /* جدول الملفات */
+      .files-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .search-input { width: 100%; }
+
+      table { font-size: 12px; }
+      th, td { padding: 10px 8px; }
+
+      /* إخفاء عمود التاريخ في الموبايل الصغير */
+      th:nth-child(4), td:nth-child(4) { display: none; }
+
+      .action-btns { flex-direction: column; gap: 4px; }
+      .action-btn  { font-size: 11px; padding: 4px 8px; text-align: center; }
+
+      /* Auth */
+      .auth-card { padding: 28px 20px; }
+      .social-btn { font-size: 13px; padding: 11px 12px; }
+
+      /* Modal */
+      .modal { padding: 24px 18px; }
+
+      /* Color preview bar */
+      .color-preview-bar { margin-bottom: 10px; }
+    }
+
+    /* شاشات صغيرة جداً */
+    @media (max-width: 400px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .color-row  { grid-template-columns: 1fr; }
+
+      th:nth-child(3), td:nth-child(3) { display: none; }
+
+      .auth-card { padding: 22px 14px; }
+      .auth-logo .logo-icon { width: 52px; height: 52px; font-size: 22px; }
+      .auth-logo h1 { font-size: 18px; }
+
+      .summary { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* تابلت */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      main { padding: 24px 20px; }
+      .converter-grid { gap: 16px; }
+      .card { padding: 22px 18px; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* إصلاح QR على الموبايل */
+    #qr-output {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #qr-output canvas,
+    #qr-output img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
       width: 36px;
       height: 36px;
       border: 3px solid rgba(108,99,255,.2);
@@ -1688,7 +1819,7 @@ function formatSize(bytes) {
   return (bytes/(1024*1024)).toFixed(1) + ' MB';
 }
 
-const MAX_FILE_MB = 2;
+const MAX_FILE_MB = 10;
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const MAX_STORAGE_BYTES = 4 * 1024 * 1024;
 
@@ -1795,7 +1926,7 @@ async function convertAllFiles() {
 
       qi.querySelector('.q-progress').style.width = '60%';
 
-      const pngData = await generateQRPng(b64, 300);
+      const pngData = await generateQRPng(f, 300);
 
       qi.querySelector('.q-progress').style.width = '90%';
 
@@ -1841,15 +1972,21 @@ async function convertAllFiles() {
   setTimeout(() => { btn.disabled = false; btn.textContent = '⚡ تحويل الكل دفعة واحدة'; }, 3000);
 }
 
-function generateQRPng(text, size) {
+function generateQRPng(file, size) {
   return new Promise((resolve, reject) => {
     const colorDark  = document.getElementById('qr-color-dark').value  || '#1a1a2e';
     const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
+    const qrText = typeof file === 'string' ? file : JSON.stringify({
+      name: file.name, size: file.size,
+      type: file.type || 'unknown',
+      date: new Date().toLocaleDateString('ar-SA'),
+      app: 'BarcodeVault'
+    });
     const div = document.createElement('div');
-    div.style.position = 'fixed'; div.style.opacity = '0'; div.style.pointerEvents = 'none';
+    div.style.cssText = 'position:fixed;opacity:0;pointer-events:none;top:-9999px';
     document.body.appendChild(div);
     try {
-      new QRCode(div, { text, width: size, height: size, colorDark, colorLight, correctLevel: QRCode.CorrectLevel.L });
+      new QRCode(div, { text: qrText, width: size, height: size, colorDark, colorLight, correctLevel: QRCode.CorrectLevel.M });
       setTimeout(() => {
         const canvas = div.querySelector('canvas');
         if (!canvas) { document.body.removeChild(div); reject(new Error('no canvas')); return; }
@@ -1994,79 +2131,74 @@ function convertToBarcode() {
   qrOutput.style.display = 'none';
   actions.classList.remove('show');
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const base64 = e.target.result;
-    const size = parseInt(document.getElementById('qr-size').value);
+  const size = parseInt(document.getElementById('qr-size').value);
+  const colorDark  = document.getElementById('qr-color-dark').value  || '#1a1a2e';
+  const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
 
-    setTimeout(() => {
-      loading.classList.remove('show');
-      qrOutput.style.display = 'block';
-      qrOutput.innerHTML = '';
+  // بدلاً من تخزين الملف كاملاً، نخزن معلوماته فقط في QR
+  const qrText = JSON.stringify({
+    name: selectedFile.name,
+    size: selectedFile.size,
+    type: selectedFile.type || 'unknown',
+    date: new Date().toLocaleDateString('ar-SA'),
+    app: 'BarcodeVault'
+  });
 
-      const colorDark  = document.getElementById('qr-color-dark').value  || '#1a1a2e';
-      const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
+  setTimeout(() => {
+    loading.classList.remove('show');
+    qrOutput.style.display = 'block';
+    qrOutput.innerHTML = '';
 
-      try {
-        new QRCode(qrOutput, {
-          text: base64,
-          width: size,
-          height: size,
-          colorDark,
-          colorLight,
-          correctLevel: QRCode.CorrectLevel.L
-        });
+    try {
+      new QRCode(qrOutput, {
+        text: qrText,
+        width: size,
+        height: size,
+        colorDark,
+        colorLight,
+        correctLevel: QRCode.CorrectLevel.M
+      });
 
-        setTimeout(() => {
-          const canvas = qrOutput.querySelector('canvas');
-          if (canvas && isTransparent) {
-            // Re-draw on new canvas with transparent background
-            const transparentCanvas = document.createElement('canvas');
-            transparentCanvas.width = canvas.width;
-            transparentCanvas.height = canvas.height;
-            const ctx = transparentCanvas.getContext('2d');
-            // Draw original
-            ctx.drawImage(canvas, 0, 0);
-            // Make white pixels transparent
-            const imageData = ctx.getImageData(0, 0, transparentCanvas.width, transparentCanvas.height);
-            const data = imageData.data;
-            for (let i = 0; i < data.length; i += 4) {
-              const r = data[i], g = data[i+1], b = data[i+2];
-              // If pixel is close to white (the light color), make it transparent
-              if (r > 200 && g > 200 && b > 200) {
-                data[i+3] = 0; // alpha = 0
-              }
-            }
-            ctx.putImageData(imageData, 0, 0);
-            // Replace canvas in DOM
-            canvas.parentNode.replaceChild(transparentCanvas, canvas);
-            lastQRCanvas = transparentCanvas;
-            lastQRDataURL = transparentCanvas.toDataURL('image/png');
-            // Show checkerboard behind output to indicate transparency
-            qrOutput.style.background = 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 12px 12px';
-            qrOutput.style.borderRadius = '8px';
-          } else if (canvas) {
-            lastQRCanvas = canvas;
-            lastQRDataURL = canvas.toDataURL('image/png');
-            qrOutput.style.background = '#fff';
-          } else {
-            const img = qrOutput.querySelector('img');
-            lastQRDataURL = img ? img.src : null;
+      setTimeout(() => {
+        const canvas = qrOutput.querySelector('canvas');
+        if (canvas && isTransparent) {
+          const transparentCanvas = document.createElement('canvas');
+          transparentCanvas.width = canvas.width;
+          transparentCanvas.height = canvas.height;
+          const ctx = transparentCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, 0);
+          const imageData = ctx.getImageData(0, 0, transparentCanvas.width, transparentCanvas.height);
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i+1], b = data[i+2];
+            if (r > 200 && g > 200 && b > 200) { data[i+3] = 0; }
           }
-          actions.classList.add('show');
-          // update download button label
-          const dlBtn = document.getElementById('download-btn');
-          if (dlBtn) dlBtn.textContent = `⬇ تنزيل ${isTransparent ? 'PNG (شفاف)' : currentExportFmt.toUpperCase()}`;
-          showToast('تم التحويل بنجاح! ✅', 'success');
-        }, 300);
-      } catch (err) {
-        qrOutput.innerHTML = '<p style="color:var(--accent2);font-size:13px">حدث خطأ: الملف كبير جداً. جرّب ملفاً أصغر.</p>';
-        showToast('الملف كبير جداً للتحويل', 'error');
-      }
-    }, 800);
-  };
-  reader.readAsDataURL(selectedFile);
-}
+          ctx.putImageData(imageData, 0, 0);
+          canvas.parentNode.replaceChild(transparentCanvas, canvas);
+          lastQRCanvas = transparentCanvas;
+          lastQRDataURL = transparentCanvas.toDataURL('image/png');
+          qrOutput.style.background = 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 12px 12px';
+          qrOutput.style.borderRadius = '8px';
+        } else if (canvas) {
+          lastQRCanvas = canvas;
+          lastQRDataURL = canvas.toDataURL('image/png');
+          qrOutput.style.background = colorLight;
+        } else {
+          const img = qrOutput.querySelector('img');
+          lastQRDataURL = img ? img.src : null;
+        }
+        actions.classList.add('show');
+        const dlBtn = document.getElementById('download-btn');
+        if (dlBtn) dlBtn.textContent = `⬇ تنزيل ${isTransparent ? 'PNG (شفاف)' : currentExportFmt.toUpperCase()}`;
+        showToast('تم التحويل بنجاح! ✅', 'success');
+      }, 300);
+    } catch (err) {
+      loading.classList.remove('show');
+      qrOutput.innerHTML = '<p style="color:var(--accent2);font-size:13px;padding:16px">حدث خطأ في التحويل، حاول مجدداً</p>';
+      showToast('خطأ في التحويل، حاول مجدداً', 'error');
+    }
+  }, 800);
+  }
 
 function downloadQR() {
   if (!lastQRDataURL) return;
