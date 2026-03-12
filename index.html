@@ -453,7 +453,7 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 // SUPABASE CONFIG
 // ============================================================
 var SUPA_URL = 'https://votjfvjwxokacdtopupr.supabase.co';
-var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvdGpmdmp3eG9rYWNkdG9wdXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMDE1ODIsImV4cCI6MjA4ODg3NzU4Mn0.mSXRmUmUhsOGQ0Id6zX4okN04G8BPe0hkmR8f95-O6M';
+var SUPA_KEY = 'sb_publishable_MJaTisgmvzo3SQRYbBwJhA_7zWk7RPE';
 var BUCKET   = 'files';
 var supabase = null;
 
@@ -574,10 +574,10 @@ function onFileUpload(files, type) {
 }
 
 function uploadToSupabase(file, type) {
-  // لو Supabase لم يتهيأ بعد، حاول مجدداً
   if (!supabase) {
-    if (window.supabase && window.supabase.createClient) {
-      supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    var lib = window.supabase || window.supabaseJs || window.Supabase;
+    if (lib && lib.createClient) {
+      supabase = lib.createClient(SUPA_URL, SUPA_KEY);
     } else {
       showWarn(type + '-warn', '❌ لم يتم الاتصال بالسيرفر — أعد تحميل الصفحة');
       return;
@@ -594,14 +594,13 @@ function uploadToSupabase(file, type) {
   progPct.textContent = '5%';
   progLbl.textContent = 'جاري الرفع...';
 
-  // اسم فريد للملف
-  var ext      = file.name.split('.').pop();
+  var ext      = file.name.split('.').pop().toLowerCase();
   var fileName = type + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.' + ext;
 
-  // محاكاة تقدم (Supabase JS لا يدعم progress events)
+  // محاكاة تقدم
   var fakeP = 5;
   var fakeInterval = setInterval(function() {
-    fakeP = Math.min(fakeP + Math.random() * 15, 85);
+    fakeP = Math.min(fakeP + Math.random() * 12, 85);
     progBar.style.width = fakeP + '%';
     progPct.textContent = Math.round(fakeP) + '%';
   }, 400);
@@ -609,7 +608,7 @@ function uploadToSupabase(file, type) {
   supabase.storage.from(BUCKET).upload(fileName, file, {
     cacheControl: '3600',
     upsert: false,
-    contentType: file.type
+    contentType: file.type || 'application/octet-stream'
   }).then(function(result) {
     clearInterval(fakeInterval);
 
@@ -619,17 +618,13 @@ function uploadToSupabase(file, type) {
       return;
     }
 
-    // الحصول على الرابط العام
-    var pubResult = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-    var publicURL = pubResult.data.publicUrl;
+    var publicURL = SUPA_URL + '/storage/v1/object/public/' + BUCKET + '/' + fileName;
 
     progBar.style.width = '100%';
     progPct.textContent = '100%';
     progLbl.textContent = '✅ تم الرفع!';
 
-    setTimeout(function() {
-      progWrap.style.display = 'none';
-    }, 1200);
+    setTimeout(function() { progWrap.style.display = 'none'; }, 1200);
 
     uploadedURL[type] = publicURL;
     document.getElementById(type + '-mt').textContent = fmtSz(file.size) + ' • جاهز ✅';
@@ -968,32 +963,50 @@ function convertTxt() {
   var btn = document.getElementById('txt-btn');
   btn.disabled = true;
   btn.innerHTML = '⏳ جاري التحويل...';
-  setProgress('txt', 30);
+  setProgress('txt', 20);
 
+  // استخدام html2canvas لدعم العربية بدل jsPDF مباشرة
+  var container = document.createElement('div');
+  container.style.cssText = [
+    'position:fixed','left:-9999px','top:0',
+    'width:794px','background:#fff',
+    'padding:50px 60px',
+    'font-family:Cairo,Arial,sans-serif',
+    'font-size:15pt','line-height:2',
+    'color:#111','direction:rtl','text-align:right',
+    'white-space:pre-wrap','word-break:break-word'
+  ].join(';');
+  container.textContent = txt;
+  document.body.appendChild(container);
+  setProgress('txt', 40);
+
+  // انتظر تحميل الخط
   setTimeout(function() {
-    try {
-      var pdf    = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      var pdfW   = pdf.internal.pageSize.getWidth();
-      var pdfH   = pdf.internal.pageSize.getHeight();
-      var margin = 15;
-      var maxW   = pdfW - margin * 2;
-      var lineH  = 8;
-      var y      = margin + 6;
+    html2canvas(container, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      allowTaint: true,
+      width: 794,
+      windowWidth: 794
+    }).then(function(canvas) {
+      document.body.removeChild(container);
+      setProgress('txt', 80);
 
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(12);
-      pdf.setTextColor(30, 30, 30);
-      setProgress('txt', 60);
+      var pdf   = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      var pdfW  = pdf.internal.pageSize.getWidth();
+      var pdfH  = pdf.internal.pageSize.getHeight();
+      var ratio = pdfW / canvas.width;
+      var totalH = canvas.height * ratio;
+      var posY   = 0;
 
-      txt.split('\n').forEach(function(line) {
-        pdf.splitTextToSize(line || ' ', maxW).forEach(function(wl) {
-          if (y > pdfH - margin) { pdf.addPage(); y = margin + 6; }
-          pdf.text(wl, margin, y);
-          y += lineH;
-        });
-      });
+      while (posY < totalH) {
+        if (posY > 0) pdf.addPage();
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, -posY, pdfW, totalH);
+        posY += pdfH;
+      }
 
-      setProgress('txt', 90);
+      setProgress('txt', 100);
       var url = URL.createObjectURL(pdf.output('blob'));
       document.getElementById('txt-dl').onclick = function() {
         var a = document.createElement('a');
@@ -1001,7 +1014,6 @@ function convertTxt() {
         toast('✅ تم تنزيل PDF', 'ok');
       };
 
-      setProgress('txt', 100);
       setTimeout(function(){
         document.getElementById('txt-prog').classList.remove('on');
         document.getElementById('txt-result').classList.add('on');
@@ -1010,11 +1022,12 @@ function convertTxt() {
         toast('✅ تم تحويل النص إلى PDF!', 'ok');
       }, 300);
 
-    } catch(e) {
-      cvtErr('txt', 'فشل التحويل: ' + (e.message || e));
+    }).catch(function(err) {
+      document.body.removeChild(container);
+      cvtErr('txt', 'فشل التحويل: ' + (err.message || err));
       btn.disabled = false; btn.innerHTML = '<span>⚡</span> تحويل إلى PDF';
-    }
-  }, 200);
+    });
+  }, 500);
 }
 
 // ============================================================
