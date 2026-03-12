@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BarcodeVault - محول الملفات إلى باركود</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
@@ -1972,31 +1972,7 @@ async function convertAllFiles() {
   setTimeout(() => { btn.disabled = false; btn.textContent = '⚡ تحويل الكل دفعة واحدة'; }, 3000);
 }
 
-function generateQRPng(file, size) {
-  return new Promise((resolve, reject) => {
-    const colorDark  = document.getElementById('qr-color-dark').value  || '#1a1a2e';
-    const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
-    const qrText = typeof file === 'string' ? file : JSON.stringify({
-      name: file.name, size: file.size,
-      type: file.type || 'unknown',
-      date: new Date().toLocaleDateString('ar-SA'),
-      app: 'BarcodeVault'
-    });
-    const div = document.createElement('div');
-    div.style.cssText = 'position:fixed;opacity:0;pointer-events:none;top:-9999px';
-    document.body.appendChild(div);
-    try {
-      new QRCode(div, { text: qrText, width: size, height: size, colorDark, colorLight, correctLevel: QRCode.CorrectLevel.M });
-      setTimeout(() => {
-        const canvas = div.querySelector('canvas');
-        if (!canvas) { document.body.removeChild(div); reject(new Error('no canvas')); return; }
-        const dataURL = canvas.toDataURL('image/png');
-        document.body.removeChild(div);
-        resolve(dataURL);
-      }, 400);
-    } catch(e) { document.body.removeChild(div); reject(e); }
-  });
-}
+
 
 function handleFile(file) {
   if (!file) return;
@@ -2117,88 +2093,110 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// CONVERSION
+// CONVERSION — using qrcode.js (npm qrcode library)
 // ============================================================
-function convertToBarcode() {
+
+function getQRText() {
+  if (!selectedFile) return '';
+  return [
+    'BarcodeVault',
+    'الملف: ' + selectedFile.name,
+    'الحجم: ' + formatSize(selectedFile.size),
+    'النوع: ' + (selectedFile.type || selectedFile.name.split('.').pop()),
+    'التاريخ: ' + new Date().toLocaleDateString('ar-SA')
+  ].join('\n');
+}
+
+async function renderQRToCanvas(text, size, colorDark, colorLight) {
+  const canvas = document.createElement('canvas');
+  await QRCode.toCanvas(canvas, text, {
+    width: size,
+    margin: 2,
+    color: { dark: colorDark, light: colorLight },
+    errorCorrectionLevel: 'M'
+  });
+  return canvas;
+}
+
+async function convertToBarcode() {
   if (!selectedFile) return;
-  const loading = document.getElementById('loading-state');
+  const loading   = document.getElementById('loading-state');
   const outputArea = document.getElementById('output-area');
-  const qrOutput = document.getElementById('qr-output');
-  const actions = document.getElementById('output-actions');
+  const qrOutput  = document.getElementById('qr-output');
+  const actions   = document.getElementById('output-actions');
 
   loading.classList.add('show');
   outputArea.style.display = 'none';
   qrOutput.style.display = 'none';
   actions.classList.remove('show');
 
-  const size = parseInt(document.getElementById('qr-size').value);
-  const colorDark  = document.getElementById('qr-color-dark').value  || '#1a1a2e';
+  const size       = parseInt(document.getElementById('qr-size').value);
+  const colorDark  = document.getElementById('qr-color-dark').value  || '#000000';
   const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
+  const qrText     = getQRText();
 
-  // بدلاً من تخزين الملف كاملاً، نخزن معلوماته فقط في QR
-  const qrText = JSON.stringify({
-    name: selectedFile.name,
-    size: selectedFile.size,
-    type: selectedFile.type || 'unknown',
-    date: new Date().toLocaleDateString('ar-SA'),
-    app: 'BarcodeVault'
-  });
+  try {
+    await new Promise(r => setTimeout(r, 400)); // brief delay for UX
 
-  setTimeout(() => {
+    const canvas = await renderQRToCanvas(qrText, size, colorDark, colorLight);
+
+    loading.classList.remove('show');
+    qrOutput.innerHTML = '';
+    qrOutput.style.display = 'flex';
+
+    if (isTransparent) {
+      // Make light color pixels transparent
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = imgData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > 200 && d[i+1] > 200 && d[i+2] > 200) d[i+3] = 0;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      qrOutput.style.background = 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 12px 12px';
+      qrOutput.style.borderRadius = '8px';
+      qrOutput.style.padding = '8px';
+    } else {
+      qrOutput.style.background = colorLight;
+      qrOutput.style.padding = '10px';
+      qrOutput.style.borderRadius = '8px';
+    }
+
+    canvas.style.maxWidth = '100%';
+    canvas.style.height = 'auto';
+    canvas.style.borderRadius = '6px';
+    qrOutput.appendChild(canvas);
+
+    lastQRCanvas  = canvas;
+    lastQRDataURL = canvas.toDataURL('image/png');
+
+    actions.classList.add('show');
+    const dlBtn = document.getElementById('download-btn');
+    if (dlBtn) dlBtn.textContent = `⬇ تنزيل ${isTransparent ? 'PNG (شفاف)' : currentExportFmt.toUpperCase()}`;
+    showToast('تم التحويل بنجاح! ✅', 'success');
+
+  } catch (err) {
     loading.classList.remove('show');
     qrOutput.style.display = 'block';
-    qrOutput.innerHTML = '';
-
-    try {
-      new QRCode(qrOutput, {
-        text: qrText,
-        width: size,
-        height: size,
-        colorDark,
-        colorLight,
-        correctLevel: QRCode.CorrectLevel.M
-      });
-
-      setTimeout(() => {
-        const canvas = qrOutput.querySelector('canvas');
-        if (canvas && isTransparent) {
-          const transparentCanvas = document.createElement('canvas');
-          transparentCanvas.width = canvas.width;
-          transparentCanvas.height = canvas.height;
-          const ctx = transparentCanvas.getContext('2d');
-          ctx.drawImage(canvas, 0, 0);
-          const imageData = ctx.getImageData(0, 0, transparentCanvas.width, transparentCanvas.height);
-          const data = imageData.data;
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i], g = data[i+1], b = data[i+2];
-            if (r > 200 && g > 200 && b > 200) { data[i+3] = 0; }
-          }
-          ctx.putImageData(imageData, 0, 0);
-          canvas.parentNode.replaceChild(transparentCanvas, canvas);
-          lastQRCanvas = transparentCanvas;
-          lastQRDataURL = transparentCanvas.toDataURL('image/png');
-          qrOutput.style.background = 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 12px 12px';
-          qrOutput.style.borderRadius = '8px';
-        } else if (canvas) {
-          lastQRCanvas = canvas;
-          lastQRDataURL = canvas.toDataURL('image/png');
-          qrOutput.style.background = colorLight;
-        } else {
-          const img = qrOutput.querySelector('img');
-          lastQRDataURL = img ? img.src : null;
-        }
-        actions.classList.add('show');
-        const dlBtn = document.getElementById('download-btn');
-        if (dlBtn) dlBtn.textContent = `⬇ تنزيل ${isTransparent ? 'PNG (شفاف)' : currentExportFmt.toUpperCase()}`;
-        showToast('تم التحويل بنجاح! ✅', 'success');
-      }, 300);
-    } catch (err) {
-      loading.classList.remove('show');
-      qrOutput.innerHTML = '<p style="color:var(--accent2);font-size:13px;padding:16px">حدث خطأ في التحويل، حاول مجدداً</p>';
-      showToast('خطأ في التحويل، حاول مجدداً', 'error');
-    }
-  }, 800);
+    qrOutput.innerHTML = '<p style="color:var(--accent2);font-size:13px;padding:16px;text-align:center">حدث خطأ، حاول مجدداً</p>';
+    console.error('QR Error:', err);
+    showToast('حدث خطأ، حاول مجدداً', 'error');
   }
+}
+
+async function generateQRPng(file, size) {
+  const colorDark  = document.getElementById('qr-color-dark').value  || '#000000';
+  const colorLight = isTransparent ? '#ffffff' : (document.getElementById('qr-color-light').value || '#ffffff');
+  const text = [
+    'BarcodeVault',
+    'الملف: ' + file.name,
+    'الحجم: ' + formatSize(file.size),
+    'النوع: ' + (file.type || file.name.split('.').pop()),
+    'التاريخ: ' + new Date().toLocaleDateString('ar-SA')
+  ].join('\n');
+  const canvas = await renderQRToCanvas(text, size, colorDark, colorLight);
+  return canvas.toDataURL('image/png');
+}
 
 function downloadQR() {
   if (!lastQRDataURL) return;
