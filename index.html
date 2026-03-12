@@ -6,6 +6,9 @@
 <title>BarcodeVault — أنشئ QR Code مجاناً</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{
   --bg:#080810;--s:#0f0f1a;--s2:#16162a;--s3:#1e1e35;
@@ -33,8 +36,8 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 .hero h1{font-size:36px;font-weight:900;line-height:1.2;margin-bottom:12px;background:linear-gradient(135deg,var(--t),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{font-size:15px;color:var(--t2);max-width:480px;margin:0 auto;line-height:1.7}
 
-/* TYPE GRID — 3 cards */
-.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:680px;margin:0 auto 36px}
+/* TYPE GRID — 2 cards */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto 36px}
 .type-card{background:var(--s);border:2px solid var(--b);border-radius:20px;padding:26px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .type-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--a),var(--a2));opacity:0;transition:opacity .2s}
 .type-card:hover{border-color:var(--a);transform:translateY(-3px);box-shadow:0 14px 36px rgba(124,111,255,.2)}
@@ -77,23 +80,9 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 .fprev-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 .fprev-mt{font-size:11px;color:var(--t2);margin-top:3px}
 
-/* IMAGE PREVIEW */
-.img-preview-wrap{display:none;margin-bottom:14px;text-align:center}
-.img-preview-wrap.on{display:block}
-.img-preview{max-width:100%;max-height:180px;border-radius:12px;border:1px solid var(--b);object-fit:contain;background:#fff}
-
-/* TABS inside image panel */
-.img-tabs{display:flex;background:var(--s2);border-radius:10px;padding:4px;gap:4px;margin-bottom:16px}
-.img-tab{flex:1;padding:8px;border:none;border-radius:7px;background:transparent;color:var(--t2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
-.img-tab.on{background:var(--a);color:#fff}
-
-/* URL input for image */
-.plain-inp{width:100%;padding:13px 16px;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;margin-bottom:10px}
-.plain-inp:focus{border-color:var(--a)}
 
 .warn-box{background:rgba(255,190,61,.07);border:1px solid rgba(255,190,61,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--warn);margin-bottom:14px;line-height:1.8;display:none}
 .warn-box.on{display:block}
-.info-box{background:rgba(124,111,255,.07);border:1px solid rgba(124,111,255,.15);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.8}
 
 /* SIZE */
 .sz-btns{display:flex;gap:8px;margin-bottom:22px}
@@ -143,7 +132,38 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 .toast.bad{border-color:rgba(255,95,160,.45);color:var(--err)}
 .toast.warn{border-color:rgba(255,190,61,.45);color:var(--warn)}
 
-/* RESPONSIVE */
+/* CONVERT SECTION */
+.cvt-section{max-width:1060px;margin:40px auto 0;padding:0 24px 60px;position:relative;z-index:1}
+.cvt-divider{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.cvt-divider-line{flex:1;height:1px;background:var(--b)}
+.cvt-divider-txt{font-size:13px;font-weight:700;color:var(--t3);white-space:nowrap;padding:6px 16px;background:var(--s);border:1px solid var(--b);border-radius:20px}
+.cvt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:740px){.cvt-grid{grid-template-columns:1fr}}
+.cvt-card{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:28px}
+.cvt-hd{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;margin-bottom:6px}
+.cvt-sub{font-size:12px;color:var(--t2);margin-bottom:22px;line-height:1.7}
+.cvt-types{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.cvt-tag{padding:5px 12px;background:rgba(124,111,255,.1);border:1px solid rgba(124,111,255,.2);border-radius:20px;font-size:11px;font-weight:700;color:var(--a)}
+.cvt-drop{border:2px dashed var(--b);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .25s;position:relative;margin-bottom:14px}
+.cvt-drop:hover,.cvt-drop.drag{border-color:var(--a);background:rgba(124,111,255,.04)}
+.cvt-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.cvt-drop-ic{font-size:36px;margin-bottom:8px}
+.cvt-drop-ti{font-size:14px;font-weight:700;margin-bottom:4px}
+.cvt-drop-sb{font-size:12px;color:var(--t2)}
+.cvt-fprev{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:12px 14px;display:none;align-items:center;gap:10px;margin-bottom:12px}
+.cvt-fprev.on{display:flex}
+.cvt-prog{width:100%;height:6px;background:var(--b);border-radius:3px;margin-bottom:12px;display:none}
+.cvt-prog.on{display:block}
+.cvt-prog-bar{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:3px;width:0%;transition:width .3s}
+.btn-cvt{width:100%;padding:14px;background:linear-gradient(135deg,var(--a3),#00b894);border:none;border-radius:12px;color:#000;font-family:'Cairo',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(0,229,192,.3)}
+.btn-cvt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,229,192,.5)}
+.btn-cvt:disabled{opacity:.35;cursor:not-allowed}
+.cvt-result{background:var(--s2);border:1px solid rgba(0,229,192,.2);border-radius:12px;padding:14px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.cvt-result.on{display:flex}
+.cvt-result-info{font-size:13px;font-weight:700;color:var(--ok)}
+.btn-dl-pdf{padding:9px 18px;background:var(--ok);border:none;border-radius:9px;color:#000;font-family:'Cairo',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-dl-pdf:hover{transform:scale(1.04)}
+@media(max-width:768px){.cvt-section{padding:0 14px 40px}}
 @media(max-width:768px){
   nav{padding:0 16px}
   .nav-sub{display:none}
@@ -171,20 +191,15 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 <main>
   <div class="hero">
     <h1>حوّل أي شيء إلى QR Code</h1>
-    <p>روابط، صور، وملفات PDF — قابل للمسح فوراً من أي هاتف، بدون رفع على أي سيرفر</p>
+    <p>روابط وملفات PDF — قابل للمسح فوراً من أي هاتف، بدون رفع على أي سيرفر</p>
   </div>
 
-  <!-- 3 TYPE CARDS -->
+  <!-- 2 TYPE CARDS -->
   <div class="type-grid">
     <div class="type-card on" onclick="setType('url',this)">
       <div class="tc-ic">🔗</div>
       <div class="tc-nm">رابط URL</div>
       <div class="tc-ds">موقع، واتساب، تيليجرام...</div>
-    </div>
-    <div class="type-card" onclick="setType('img',this)">
-      <div class="tc-ic">🖼️</div>
-      <div class="tc-nm">صورة</div>
-      <div class="tc-ds">من الجهاز أو رابط مباشر</div>
     </div>
     <div class="type-card" onclick="setType('pdf',this)">
       <div class="tc-ic">📄</div>
@@ -217,40 +232,6 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
           <input class="url-inp" type="text" id="url-v" placeholder="example.com" oninput="onUrl()">
         </div>
         <div class="url-prev" id="url-prev"></div>
-      </div>
-
-      <!-- ===== IMAGE PANEL ===== -->
-      <div class="inp-panel" id="panel-img">
-        <!-- SUB TABS: upload / url -->
-        <div class="img-tabs">
-          <button class="img-tab on" id="img-tab-upload" onclick="switchImgTab('upload')">📱 من الجهاز</button>
-          <button class="img-tab"    id="img-tab-url"    onclick="switchImgTab('url')">🔗 من رابط</button>
-        </div>
-
-        <!-- Upload from device -->
-        <div id="img-upload-section">
-          <div class="drop-zone" id="dz-img">
-            <input type="file" id="img-inp" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" onchange="onImgFile(this.files)">
-            <div class="dz-ic">🖼️</div>
-            <div class="dz-ti">اسحب الصورة هنا</div>
-            <div class="dz-sb">JPG، PNG، GIF، WEBP، SVG</div>
-          </div>
-        </div>
-
-        <!-- URL input -->
-        <div id="img-url-section" style="display:none">
-          <label class="lbl">رابط الصورة المباشر</label>
-          <input class="plain-inp" type="url" id="img-url-v" placeholder="https://example.com/image.jpg" oninput="onImgUrl()">
-          <div class="info-box">💡 يجب أن يكون رابط مباشر ينتهي بـ jpg أو png أو gif أو webp — وليس رابط صفحة</div>
-        </div>
-
-        <!-- Preview -->
-        <div class="img-preview-wrap" id="img-prev-wrap">
-          <img id="img-preview" class="img-preview" src="" alt="معاينة الصورة">
-          <div style="font-size:12px;color:var(--t2);margin-top:8px" id="img-prev-info"></div>
-        </div>
-
-        <div class="warn-box" id="img-warn"></div>
       </div>
 
       <!-- ===== PDF PANEL ===== -->
@@ -322,8 +303,85 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
       </div>
     </div>
 
-  </div>
+</div>
 </main>
+
+<!-- ===== CONVERT TO PDF SECTION ===== -->
+<section class="cvt-section">
+  <div class="cvt-divider">
+    <div class="cvt-divider-line"></div>
+    <div class="cvt-divider-txt">🔄 تحويل الملفات إلى PDF</div>
+    <div class="cvt-divider-line"></div>
+  </div>
+
+  <div class="cvt-grid">
+
+    <!-- WORD → PDF -->
+    <div class="cvt-card">
+      <div class="cvt-hd">
+        <div class="card-ic">📝</div>
+        <span>Word إلى PDF</span>
+      </div>
+      <div class="cvt-sub">حوّل ملفات Word مباشرة في المتصفح — بدون رفع على أي سيرفر</div>
+      <div class="cvt-types">
+        <span class="cvt-tag">.docx</span>
+        <span class="cvt-tag">.doc</span>
+      </div>
+      <div class="cvt-drop" id="dz-word">
+        <input type="file" id="word-inp" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" onchange="onWordFile(this.files)">
+        <div class="cvt-drop-ic">📄</div>
+        <div class="cvt-drop-ti">اسحب ملف Word هنا</div>
+        <div class="cvt-drop-sb">أو انقر للاختيار</div>
+      </div>
+      <div class="cvt-fprev" id="word-prev">
+        <span style="font-size:24px;flex-shrink:0">📘</span>
+        <div>
+          <div class="fprev-nm" id="word-nm">—</div>
+          <div class="fprev-mt" id="word-mt">—</div>
+        </div>
+      </div>
+      <div class="cvt-prog" id="word-prog"><div class="cvt-prog-bar" id="word-bar"></div></div>
+      <div class="warn-box" id="word-warn"></div>
+      <button class="btn-cvt" id="word-btn" disabled onclick="convertWord()">
+        <span>⚡</span> تحويل إلى PDF
+      </button>
+      <div class="cvt-result" id="word-result">
+        <div class="cvt-result-info">✅ تم التحويل بنجاح!</div>
+        <button class="btn-dl-pdf" id="word-dl">⬇ تنزيل PDF</button>
+      </div>
+    </div>
+
+    <!-- TEXT / OTHER → PDF -->
+    <div class="cvt-card">
+      <div class="cvt-hd">
+        <div class="card-ic">📋</div>
+        <span>نص إلى PDF</span>
+      </div>
+      <div class="cvt-sub">اكتب أو الصق أي نص وحوّله إلى ملف PDF جاهز للتنزيل</div>
+      <div class="cvt-types">
+        <span class="cvt-tag">نص حر</span>
+        <span class="cvt-tag">.txt</span>
+      </div>
+      <textarea id="txt-inp" placeholder="اكتب النص هنا أو الصقه..." style="width:100%;height:160px;padding:14px;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;color:var(--t);font-family:'Cairo',sans-serif;font-size:14px;line-height:1.8;resize:vertical;outline:none;transition:border-color .2s;margin-bottom:10px" oninput="chkTxt()"></textarea>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <label class="lbl" style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="file" id="txt-file" accept=".txt,text/plain" style="display:none" onchange="loadTxtFile(this.files)">
+          <button onclick="document.getElementById('txt-file').click()" style="padding:8px 14px;background:var(--s2);border:1.5px solid var(--b);border-radius:9px;color:var(--t2);font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">📂 استيراد .txt</button>
+        </label>
+        <button onclick="document.getElementById('txt-inp').value='';chkTxt()" style="padding:8px 14px;background:var(--s2);border:1.5px solid var(--b);border-radius:9px;color:var(--t2);font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🗑 مسح</button>
+      </div>
+      <div class="cvt-prog" id="txt-prog"><div class="cvt-prog-bar" id="txt-bar"></div></div>
+      <button class="btn-cvt" id="txt-btn" disabled onclick="convertTxt()">
+        <span>⚡</span> تحويل إلى PDF
+      </button>
+      <div class="cvt-result" id="txt-result">
+        <div class="cvt-result-info">✅ تم التحويل بنجاح!</div>
+        <button class="btn-dl-pdf" id="txt-dl">⬇ تنزيل PDF</button>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <div class="toast" id="toast"></div>
 
@@ -336,9 +394,7 @@ var qSz        = 300;
 var cFmt       = 'png';
 var lastURL    = null;
 var lastCvs    = null;
-var pdfContent = null;   // base64 dataURL للـ PDF
-var imgContent = null;   // base64 dataURL أو URL للصورة
-var imgMode    = 'upload'; // 'upload' أو 'url'
+var pdfContent = null;
 
 // ============================================================
 // TYPE SELECTION
@@ -346,13 +402,12 @@ var imgMode    = 'upload'; // 'upload' أو 'url'
 function setType(t, el) {
   cType = t;
   pdfContent = null;
-  imgContent = null;
   document.querySelectorAll('.type-card').forEach(function(c){ c.classList.remove('on'); });
   el.classList.add('on');
   document.querySelectorAll('.inp-panel').forEach(function(p){ p.classList.remove('on'); });
   document.getElementById('panel-' + t).classList.add('on');
-  var titles = { url:'إدخال الرابط', img:'إضافة صورة', pdf:'رفع PDF' };
-  var icons  = { url:'🔗', img:'🖼️', pdf:'📄' };
+  var titles = { url:'إدخال الرابط', pdf:'رفع PDF' };
+  var icons  = { url:'🔗', pdf:'📄' };
   document.getElementById('inp-ti').textContent = titles[t];
   document.getElementById('inp-ic').textContent = icons[t];
   resetOut();
@@ -384,118 +439,6 @@ function onUrl() {
 }
 
 // ============================================================
-// IMAGE — SUB TABS
-// ============================================================
-function switchImgTab(mode) {
-  imgMode = mode;
-  imgContent = null;
-  document.getElementById('img-tab-upload').classList.toggle('on', mode === 'upload');
-  document.getElementById('img-tab-url').classList.toggle('on',    mode === 'url');
-  document.getElementById('img-upload-section').style.display = mode === 'upload' ? 'block' : 'none';
-  document.getElementById('img-url-section').style.display    = mode === 'url'    ? 'block' : 'none';
-  document.getElementById('img-prev-wrap').classList.remove('on');
-  document.getElementById('img-warn').classList.remove('on');
-  document.getElementById('img-url-v').value = '';
-  chkBtn();
-}
-
-// --- رفع من الجهاز ---
-function onImgFile(files) {
-  var f = files[0];
-  if (!f) return;
-
-  var allowed = ['image/jpeg','image/png','image/gif','image/webp','image/svg+xml'];
-  if (allowed.indexOf(f.type) === -1) {
-    showImgWarn('نوع الملف غير مدعوم. يرجى اختيار JPG أو PNG أو GIF أو WEBP أو SVG');
-    imgContent = null; chkBtn(); return;
-  }
-
-  var MAX_IMG = 2 * 1024 * 1024; // 2MB
-  if (f.size > MAX_IMG) {
-    showImgWarn('⚠️ الصورة كبيرة جداً (' + fmtSz(f.size) + '). الحد الأقصى 2MB. ضغّط الصورة أولاً.');
-    imgContent = null; chkBtn(); return;
-  }
-
-  hideImgWarn();
-
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    imgContent = e.target.result; // data:image/...;base64,...
-    showImgPreview(imgContent, f.name + ' — ' + fmtSz(f.size));
-    chkBtn();
-    toast('✅ الصورة جاهزة للتحويل', 'ok');
-  };
-  reader.onerror = function() {
-    showImgWarn('❌ فشل قراءة الصورة، حاول مرة أخرى');
-    imgContent = null; chkBtn();
-  };
-  reader.readAsDataURL(f);
-}
-
-// --- من رابط ---
-function onImgUrl() {
-  var v = document.getElementById('img-url-v').value.trim();
-  imgContent = null;
-  hideImgWarn();
-  document.getElementById('img-prev-wrap').classList.remove('on');
-
-  if (!v) { chkBtn(); return; }
-
-  // تحقق أن الرابط يبدأ بـ http
-  if (!v.startsWith('http://') && !v.startsWith('https://')) {
-    showImgWarn('يجب أن يبدأ الرابط بـ https://');
-    chkBtn(); return;
-  }
-
-  // معاينة الصورة من الرابط
-  var testImg = new Image();
-  testImg.crossOrigin = 'anonymous';
-  testImg.onload = function() {
-    // تحويل الصورة لـ base64 عبر canvas
-    var canvas = document.createElement('canvas');
-    canvas.width  = testImg.naturalWidth;
-    canvas.height = testImg.naturalHeight;
-    var ctx = canvas.getContext('2d');
-    ctx.drawImage(testImg, 0, 0);
-    try {
-      imgContent = canvas.toDataURL('image/png');
-      showImgPreview(imgContent, 'من رابط: ' + v.slice(0, 50) + (v.length > 50 ? '…' : ''));
-      chkBtn();
-      toast('✅ الصورة محمّلة من الرابط', 'ok');
-    } catch(err) {
-      // CORS error — استخدم الرابط مباشرة
-      imgContent = v;
-      showImgPreview(v, 'رابط مباشر: ' + v.slice(0, 50));
-      chkBtn();
-      toast('✅ سيتم استخدام الرابط مباشرة', 'warn');
-    }
-  };
-  testImg.onerror = function() {
-    showImgWarn('❌ تعذّر تحميل الصورة من هذا الرابط. تأكد أن الرابط صحيح ومباشر.');
-    imgContent = null; chkBtn();
-  };
-  testImg.src = v;
-}
-
-function showImgPreview(src, info) {
-  var wrap = document.getElementById('img-prev-wrap');
-  var img  = document.getElementById('img-preview');
-  img.src  = src;
-  document.getElementById('img-prev-info').textContent = info || '';
-  wrap.classList.add('on');
-}
-
-function showImgWarn(msg) {
-  var el = document.getElementById('img-warn');
-  el.textContent = msg;
-  el.classList.add('on');
-}
-
-function hideImgWarn() {
-  document.getElementById('img-warn').classList.remove('on');
-}
-
-// ============================================================
 // PDF
 // ============================================================
 function onPdf(files) {
@@ -507,14 +450,14 @@ function onPdf(files) {
     return;
   }
 
-  var MAX_PDF = 2 * 1024 * 1024; // 2MB
+  var MAX_PDF = 13 * 1024 * 1024; // 13MB
   document.getElementById('pdf-nm').textContent = f.name;
   document.getElementById('pdf-mt').textContent = fmtSz(f.size) + ' • PDF';
   document.getElementById('pdf-prev').classList.add('on');
 
   var warn = document.getElementById('pdf-warn');
   if (f.size > MAX_PDF) {
-    warn.textContent = '⚠️ الملف كبير جداً (' + fmtSz(f.size) + '). الحد الأقصى للـ PDF هو 2MB.';
+    warn.textContent = '⚠️ الملف كبير جداً (' + fmtSz(f.size) + '). الحد الأقصى للـ PDF هو 13MB.';
     warn.classList.add('on');
     pdfContent = null; chkBtn(); return;
   }
@@ -540,7 +483,6 @@ function onPdf(files) {
 function chkBtn() {
   var ok = false;
   if (cType === 'url') ok = document.getElementById('url-v').value.trim().length > 0;
-  if (cType === 'img') ok = imgContent !== null;
   if (cType === 'pdf') ok = pdfContent !== null;
   document.getElementById('gen-btn').disabled = !ok;
 }
@@ -549,8 +491,8 @@ function chkBtn() {
 // DRAG & DROP SETUP
 // ============================================================
 window.addEventListener('DOMContentLoaded', function() {
-  setupDrop('dz-img', function(files){ onImgFile(files); });
   setupDrop('dz-pdf', function(files){ onPdf(files); });
+  setupCvtDrop('dz-word', function(files){ onWordFile(files); });
 });
 
 function setupDrop(id, cb) {
@@ -569,7 +511,6 @@ function setupDrop(id, cb) {
 // ============================================================
 function getContent() {
   if (cType === 'url') return document.getElementById('proto').value + document.getElementById('url-v').value.trim();
-  if (cType === 'img') return imgContent || '';
   if (cType === 'pdf') return pdfContent || '';
   return '';
 }
@@ -611,7 +552,7 @@ function generate() {
         document.getElementById('qr-ld').classList.remove('on');
         cont.style.display = 'block';
 
-        var infoMap = { url: content, img: '🖼️ صورة مُضمَّنة مباشرة في QR Code', pdf: '📄 PDF مُضمَّن مباشرة في QR Code' };
+        var infoMap = { url: content, pdf: '📄 PDF مُضمَّن مباشرة في QR Code' };
         var infoTxt = infoMap[cType];
         if (cType === 'url' && content.length > 80) infoTxt = content.slice(0,80) + '…';
         var infoEl = document.getElementById('qr-info');
@@ -653,16 +594,8 @@ function resetOut() {
 }
 
 function resetAll() {
-  // reset URL
   document.getElementById('url-v').value = '';
   document.getElementById('url-prev').textContent = '';
-  // reset image
-  imgContent = null;
-  document.getElementById('img-prev-wrap').classList.remove('on');
-  document.getElementById('img-warn').classList.remove('on');
-  document.getElementById('img-url-v').value = '';
-  switchImgTab('upload');
-  // reset PDF
   pdfContent = null;
   document.getElementById('pdf-prev').classList.remove('on');
   document.getElementById('pdf-warn').classList.remove('on');
@@ -723,6 +656,207 @@ function toast(m, t) {
   el.className = 'toast on ' + t;
   clearTimeout(el._t);
   el._t = setTimeout(function(){ el.classList.remove('on'); }, 3200);
+}
+
+// ============================================================
+// CONVERT: WORD → PDF
+// ============================================================
+var wordFile = null;
+
+function setupCvtDrop(id, cb) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('drag'); });
+  el.addEventListener('dragleave', function(){ el.classList.remove('drag'); });
+  el.addEventListener('drop', function(e){
+    e.preventDefault(); el.classList.remove('drag');
+    if (e.dataTransfer.files[0]) cb(e.dataTransfer.files);
+  });
+}
+
+function onWordFile(files) {
+  var f = files[0];
+  if (!f) return;
+  var ext = f.name.split('.').pop().toLowerCase();
+  if (ext !== 'docx' && ext !== 'doc') {
+    showCvtWarn('word-warn', 'يرجى اختيار ملف Word (.docx أو .doc) فقط');
+    return;
+  }
+  wordFile = f;
+  document.getElementById('word-nm').textContent = f.name;
+  document.getElementById('word-mt').textContent = fmtSz(f.size) + ' • Word';
+  document.getElementById('word-prev').classList.add('on');
+  document.getElementById('word-result').classList.remove('on');
+  document.getElementById('word-warn').classList.remove('on');
+  document.getElementById('word-btn').disabled = false;
+  toast('📘 ملف Word جاهز للتحويل', 'ok');
+}
+
+function convertWord() {
+  if (!wordFile) return;
+  var btn = document.getElementById('word-btn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ جاري التحويل...';
+  setProgress('word', 20);
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    setProgress('word', 45);
+    mammoth.convertToHtml({ arrayBuffer: e.target.result })
+      .then(function(result) {
+        setProgress('word', 70);
+        var html = result.value;
+
+        var container = document.createElement('div');
+        container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:#fff;padding:40px;font-family:Arial,sans-serif;font-size:13pt;line-height:1.8;color:#111';
+        container.innerHTML = html;
+        document.body.appendChild(container);
+
+        html2canvas(container, { scale: 1.5, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' })
+          .then(function(canvas) {
+            document.body.removeChild(container);
+            setProgress('word', 90);
+
+            var imgData = canvas.toDataURL('image/jpeg', 0.88);
+            var pdf    = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            var pdfW   = pdf.internal.pageSize.getWidth();
+            var pdfH   = pdf.internal.pageSize.getHeight();
+            var ratio  = pdfW / canvas.width;
+            var totalH = canvas.height * ratio;
+            var posY   = 0;
+
+            while (posY < totalH) {
+              if (posY > 0) pdf.addPage();
+              pdf.addImage(imgData, 'JPEG', 0, -(posY), pdfW, totalH);
+              posY += pdfH;
+            }
+
+            var blob = pdf.output('blob');
+            var url  = URL.createObjectURL(blob);
+            var outName = wordFile.name.replace(/\.(docx?)$/i, '') + '.pdf';
+
+            document.getElementById('word-dl').onclick = function() {
+              var a = document.createElement('a');
+              a.href = url; a.download = outName; a.click();
+              toast('✅ تم تنزيل PDF', 'ok');
+            };
+
+            setProgress('word', 100);
+            setTimeout(function(){
+              document.getElementById('word-prog').classList.remove('on');
+              document.getElementById('word-result').classList.add('on');
+              btn.disabled = false;
+              btn.innerHTML = '<span>⚡</span> تحويل مرة أخرى';
+              toast('✅ تم تحويل Word إلى PDF!', 'ok');
+            }, 400);
+          })
+          .catch(function(err) {
+            cvtErr('word', 'فشل رسم الصفحة: ' + (err.message || err));
+            btn.disabled = false; btn.innerHTML = '<span>⚡</span> تحويل إلى PDF';
+          });
+      })
+      .catch(function(err) {
+        cvtErr('word', 'فشل قراءة ملف Word: ' + (err.message || err));
+        btn.disabled = false; btn.innerHTML = '<span>⚡</span> تحويل إلى PDF';
+      });
+  };
+  reader.onerror = function() {
+    cvtErr('word', 'فشل قراءة الملف');
+    btn.disabled = false; btn.innerHTML = '<span>⚡</span> تحويل إلى PDF';
+  };
+  reader.readAsArrayBuffer(wordFile);
+}
+
+// ============================================================
+// CONVERT: TEXT → PDF
+// ============================================================
+function chkTxt() {
+  var v = document.getElementById('txt-inp').value.trim();
+  document.getElementById('txt-btn').disabled = v.length === 0;
+}
+
+function loadTxtFile(files) {
+  var f = files[0];
+  if (!f) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('txt-inp').value = e.target.result;
+    chkTxt();
+    toast('📄 تم استيراد الملف', 'ok');
+  };
+  reader.readAsText(f, 'UTF-8');
+}
+
+function convertTxt() {
+  var txt = document.getElementById('txt-inp').value.trim();
+  if (!txt) return;
+  var btn = document.getElementById('txt-btn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ جاري التحويل...';
+  setProgress('txt', 30);
+
+  setTimeout(function() {
+    try {
+      var pdf    = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      var pdfW   = pdf.internal.pageSize.getWidth();
+      var pdfH   = pdf.internal.pageSize.getHeight();
+      var margin = 15;
+      var maxW   = pdfW - margin * 2;
+      var lineH  = 8;
+      var y      = margin + 6;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
+      pdf.setTextColor(30, 30, 30);
+      setProgress('txt', 60);
+
+      txt.split('\n').forEach(function(line) {
+        pdf.splitTextToSize(line || ' ', maxW).forEach(function(wl) {
+          if (y > pdfH - margin) { pdf.addPage(); y = margin + 6; }
+          pdf.text(wl, margin, y);
+          y += lineH;
+        });
+      });
+
+      setProgress('txt', 90);
+      var url = URL.createObjectURL(pdf.output('blob'));
+      document.getElementById('txt-dl').onclick = function() {
+        var a = document.createElement('a');
+        a.href = url; a.download = 'text_' + Date.now() + '.pdf'; a.click();
+        toast('✅ تم تنزيل PDF', 'ok');
+      };
+
+      setProgress('txt', 100);
+      setTimeout(function(){
+        document.getElementById('txt-prog').classList.remove('on');
+        document.getElementById('txt-result').classList.add('on');
+        btn.disabled = false;
+        btn.innerHTML = '<span>⚡</span> تحويل مرة أخرى';
+        toast('✅ تم تحويل النص إلى PDF!', 'ok');
+      }, 300);
+
+    } catch(e) {
+      cvtErr('txt', 'فشل التحويل: ' + (e.message || e));
+      btn.disabled = false; btn.innerHTML = '<span>⚡</span> تحويل إلى PDF';
+    }
+  }, 200);
+}
+
+// ============================================================
+// CONVERT HELPERS
+// ============================================================
+function setProgress(id, pct) {
+  document.getElementById(id + '-prog').classList.add('on');
+  document.getElementById(id + '-bar').style.width = pct + '%';
+}
+function cvtErr(id, msg) {
+  showCvtWarn(id + '-warn', '❌ ' + msg);
+  document.getElementById(id + '-prog').classList.remove('on');
+}
+function showCvtWarn(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.classList.add('on');
 }
 </script>
 </body>
