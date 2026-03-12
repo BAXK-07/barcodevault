@@ -6,6 +6,26 @@
 <title>BarcodeVault — أنشئ QR Code مجاناً</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// تحميل Supabase بطريقة dynamic مع fallback لعدة CDNs
+(function() {
+  var cdns = [
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://esm.sh/@supabase/supabase-js@2?bundle'
+  ];
+  var idx = 0;
+  function tryLoad() {
+    if (idx >= cdns.length) { window._supabaseFailed = true; return; }
+    var s = document.createElement('script');
+    s.src = cdns[idx++];
+    s.onload = function() { window._supabaseLoaded = true; };
+    s.onerror = function() { tryLoad(); };
+    document.head.appendChild(s);
+  }
+  tryLoad();
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -80,6 +100,8 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 .fprev-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 .fprev-mt{font-size:11px;color:var(--t2);margin-top:3px}
 
+
+.upload-prog{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:14px 16px;margin-bottom:14px}
 
 .warn-box{background:rgba(255,190,61,.07);border:1px solid rgba(255,190,61,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--warn);margin-bottom:14px;line-height:1.8;display:none}
 .warn-box.on{display:block}
@@ -191,20 +213,25 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 <main>
   <div class="hero">
     <h1>حوّل أي شيء إلى QR Code</h1>
-    <p>روابط وملفات PDF — قابل للمسح فوراً من أي هاتف، بدون رفع على أي سيرفر</p>
+    <p>روابط، صور، وملفات PDF — قابل للمسح فوراً من أي هاتف</p>
   </div>
 
-  <!-- 2 TYPE CARDS -->
-  <div class="type-grid">
+  <!-- 3 TYPE CARDS -->
+  <div class="type-grid" style="grid-template-columns:repeat(3,1fr);max-width:680px">
     <div class="type-card on" onclick="setType('url',this)">
       <div class="tc-ic">🔗</div>
       <div class="tc-nm">رابط URL</div>
       <div class="tc-ds">موقع، واتساب، تيليجرام...</div>
     </div>
+    <div class="type-card" onclick="setType('img',this)">
+      <div class="tc-ic">🖼️</div>
+      <div class="tc-nm">صورة</div>
+      <div class="tc-ds">JPG، PNG، WEBP — حتى 50MB</div>
+    </div>
     <div class="type-card" onclick="setType('pdf',this)">
       <div class="tc-ic">📄</div>
       <div class="tc-nm">PDF</div>
-      <div class="tc-ds">يُحوَّل مباشرة بدون رفع</div>
+      <div class="tc-ds">يُرفع ويتحول لرابط QR</div>
     </div>
   </div>
 
@@ -234,19 +261,55 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
         <div class="url-prev" id="url-prev"></div>
       </div>
 
+      <!-- ===== IMAGE PANEL ===== -->
+      <div class="inp-panel" id="panel-img">
+        <div class="drop-zone" id="dz-img">
+          <input type="file" id="img-inp" accept="image/jpeg,image/png,image/gif,image/webp" onchange="onFileUpload(this.files,'img')">
+          <div class="dz-ic">🖼️</div>
+          <div class="dz-ti">اسحب الصورة هنا</div>
+          <div class="dz-sb">JPG، PNG، GIF، WEBP — حتى 50MB</div>
+        </div>
+        <div class="fprev" id="img-prev">
+          <span style="font-size:26px;flex-shrink:0">🖼️</span>
+          <div>
+            <div class="fprev-nm" id="img-nm">—</div>
+            <div class="fprev-mt" id="img-mt">—</div>
+          </div>
+        </div>
+        <div class="upload-prog" id="img-prog-wrap" style="display:none">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--t2)" id="img-prog-lbl">جاري الرفع...</span>
+            <span style="font-size:12px;font-family:monospace;color:var(--a)" id="img-prog-pct">0%</span>
+          </div>
+          <div style="height:6px;background:var(--b);border-radius:3px">
+            <div id="img-prog-bar" style="height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:3px;width:0%;transition:width .3s"></div>
+          </div>
+        </div>
+        <div class="warn-box" id="img-warn"></div>
+      </div>
+
       <!-- ===== PDF PANEL ===== -->
       <div class="inp-panel" id="panel-pdf">
         <div class="drop-zone" id="dz-pdf">
-          <input type="file" id="pdf-inp" accept=".pdf,application/pdf" onchange="onPdf(this.files)">
+          <input type="file" id="pdf-inp" accept=".pdf,application/pdf" onchange="onFileUpload(this.files,'pdf')">
           <div class="dz-ic">📄</div>
           <div class="dz-ti">اسحب ملف PDF هنا</div>
-          <div class="dz-sb">أو انقر للاختيار • PDF فقط</div>
+          <div class="dz-sb">أو انقر للاختيار • PDF فقط • حتى 50MB</div>
         </div>
         <div class="fprev" id="pdf-prev">
           <span style="font-size:26px;flex-shrink:0">📕</span>
           <div>
             <div class="fprev-nm" id="pdf-nm">—</div>
             <div class="fprev-mt" id="pdf-mt">—</div>
+          </div>
+        </div>
+        <div class="upload-prog" id="pdf-prog-wrap" style="display:none">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--t2)" id="pdf-prog-lbl">جاري الرفع...</span>
+            <span style="font-size:12px;font-family:monospace;color:var(--a)" id="pdf-prog-pct">0%</span>
+          </div>
+          <div style="height:6px;background:var(--b);border-radius:3px">
+            <div id="pdf-prog-bar" style="height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:3px;width:0%;transition:width .3s"></div>
           </div>
         </div>
         <div class="warn-box" id="pdf-warn"></div>
@@ -387,6 +450,44 @@ main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:
 
 <script>
 // ============================================================
+// SUPABASE CONFIG
+// ============================================================
+var SUPA_URL = 'https://votjfvjwxokacdtopupr.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvdGpmdmp3eG9rYWNkdG9wdXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMDE1ODIsImV4cCI6MjA4ODg3NzU4Mn0.mSXRmUmUhsOGQ0Id6zX4okN04G8BPe0hkmR8f95-O6M';
+var BUCKET   = 'files';
+var supabase = null;
+
+window.addEventListener('DOMContentLoaded', function() {
+  // تهيئة Supabase — ننتظر تحميل المكتبة
+  var initAttempts = 0;
+  function initSupabase() {
+    initAttempts++;
+    // Supabase UMD يضع نفسه في window.supabase أو window.supabaseJs
+    var lib = window.supabase || window.supabaseJs || window.Supabase;
+    if (lib && lib.createClient) {
+      try {
+        supabase = lib.createClient(SUPA_URL, SUPA_KEY);
+        console.log('✅ Supabase connected');
+      } catch(e) {
+        console.error('Supabase init error:', e);
+      }
+    } else if (window._supabaseFailed) {
+      showWarn('pdf-warn', '❌ فشل تحميل مكتبة Supabase — تحقق من الاتصال بالإنترنت');
+      showWarn('img-warn', '❌ فشل تحميل مكتبة Supabase — تحقق من الاتصال بالإنترنت');
+    } else if (initAttempts < 30) {
+      setTimeout(initSupabase, 300);
+    } else {
+      showWarn('pdf-warn', '❌ انتهت مهلة تحميل Supabase — أعد تحميل الصفحة');
+      showWarn('img-warn', '❌ انتهت مهلة تحميل Supabase — أعد تحميل الصفحة');
+    }
+  }
+  initSupabase();
+  setupDrop('dz-pdf', function(files){ onFileUpload(files,'pdf'); });
+  setupDrop('dz-img', function(files){ onFileUpload(files,'img'); });
+  setupCvtDrop('dz-word', function(files){ onWordFile(files); });
+});
+
+// ============================================================
 // STATE
 // ============================================================
 var cType      = 'url';
@@ -394,20 +495,19 @@ var qSz        = 300;
 var cFmt       = 'png';
 var lastURL    = null;
 var lastCvs    = null;
-var pdfContent = null;
+var uploadedURL = { img: null, pdf: null }; // روابط Supabase
 
 // ============================================================
 // TYPE SELECTION
 // ============================================================
 function setType(t, el) {
   cType = t;
-  pdfContent = null;
   document.querySelectorAll('.type-card').forEach(function(c){ c.classList.remove('on'); });
   el.classList.add('on');
   document.querySelectorAll('.inp-panel').forEach(function(p){ p.classList.remove('on'); });
   document.getElementById('panel-' + t).classList.add('on');
-  var titles = { url:'إدخال الرابط', pdf:'رفع PDF' };
-  var icons  = { url:'🔗', pdf:'📄' };
+  var titles = { url:'إدخال الرابط', img:'رفع صورة', pdf:'رفع PDF' };
+  var icons  = { url:'🔗', img:'🖼️', pdf:'📄' };
   document.getElementById('inp-ti').textContent = titles[t];
   document.getElementById('inp-ic').textContent = icons[t];
   resetOut();
@@ -439,42 +539,108 @@ function onUrl() {
 }
 
 // ============================================================
-// PDF
+// SUPABASE FILE UPLOAD (صور + PDF)
 // ============================================================
-function onPdf(files) {
+function onFileUpload(files, type) {
   var f = files[0];
   if (!f) return;
 
-  if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) {
-    toast('يرجى اختيار ملف PDF فقط', 'bad');
+  // تحقق النوع
+  if (type === 'pdf' && f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) {
+    showWarn(type + '-warn', 'يرجى اختيار ملف PDF فقط');
+    return;
+  }
+  if (type === 'img') {
+    var ok = ['image/jpeg','image/png','image/gif','image/webp'].indexOf(f.type) !== -1;
+    if (!ok) { showWarn('img-warn', 'يرجى اختيار صورة JPG أو PNG أو GIF أو WEBP'); return; }
+  }
+
+  var MAX = 50 * 1024 * 1024; // 50MB
+  if (f.size > MAX) {
+    showWarn(type + '-warn', '⚠️ الحجم ' + fmtSz(f.size) + ' يتجاوز الحد الأقصى 50MB');
     return;
   }
 
-  var MAX_PDF = 13 * 1024 * 1024; // 13MB
-  document.getElementById('pdf-nm').textContent = f.name;
-  document.getElementById('pdf-mt').textContent = fmtSz(f.size) + ' • PDF';
-  document.getElementById('pdf-prev').classList.add('on');
+  // إظهار معلومات الملف
+  document.getElementById(type + '-nm').textContent = f.name;
+  document.getElementById(type + '-mt').textContent = fmtSz(f.size);
+  document.getElementById(type + '-prev').classList.add('on');
+  hideWarn(type + '-warn');
+  uploadedURL[type] = null;
+  chkBtn();
 
-  var warn = document.getElementById('pdf-warn');
-  if (f.size > MAX_PDF) {
-    warn.textContent = '⚠️ الملف كبير جداً (' + fmtSz(f.size) + '). الحد الأقصى للـ PDF هو 13MB.';
-    warn.classList.add('on');
-    pdfContent = null; chkBtn(); return;
+  // بدء الرفع
+  uploadToSupabase(f, type);
+}
+
+function uploadToSupabase(file, type) {
+  // لو Supabase لم يتهيأ بعد، حاول مجدداً
+  if (!supabase) {
+    if (window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    } else {
+      showWarn(type + '-warn', '❌ لم يتم الاتصال بالسيرفر — أعد تحميل الصفحة');
+      return;
+    }
   }
 
-  warn.classList.remove('on');
+  var progWrap = document.getElementById(type + '-prog-wrap');
+  var progBar  = document.getElementById(type + '-prog-bar');
+  var progPct  = document.getElementById(type + '-prog-pct');
+  var progLbl  = document.getElementById(type + '-prog-lbl');
 
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    pdfContent = e.target.result;
+  progWrap.style.display = 'block';
+  progBar.style.width = '5%';
+  progPct.textContent = '5%';
+  progLbl.textContent = 'جاري الرفع...';
+
+  // اسم فريد للملف
+  var ext      = file.name.split('.').pop();
+  var fileName = type + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.' + ext;
+
+  // محاكاة تقدم (Supabase JS لا يدعم progress events)
+  var fakeP = 5;
+  var fakeInterval = setInterval(function() {
+    fakeP = Math.min(fakeP + Math.random() * 15, 85);
+    progBar.style.width = fakeP + '%';
+    progPct.textContent = Math.round(fakeP) + '%';
+  }, 400);
+
+  supabase.storage.from(BUCKET).upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type
+  }).then(function(result) {
+    clearInterval(fakeInterval);
+
+    if (result.error) {
+      progWrap.style.display = 'none';
+      showWarn(type + '-warn', '❌ فشل الرفع: ' + result.error.message);
+      return;
+    }
+
+    // الحصول على الرابط العام
+    var pubResult = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+    var publicURL = pubResult.data.publicUrl;
+
+    progBar.style.width = '100%';
+    progPct.textContent = '100%';
+    progLbl.textContent = '✅ تم الرفع!';
+
+    setTimeout(function() {
+      progWrap.style.display = 'none';
+    }, 1200);
+
+    uploadedURL[type] = publicURL;
+    document.getElementById(type + '-mt').textContent = fmtSz(file.size) + ' • جاهز ✅';
     chkBtn();
-    toast('✅ PDF جاهز للتحويل', 'ok');
-  };
-  reader.onerror = function() {
-    toast('❌ فشل قراءة الملف', 'bad');
-    pdfContent = null; chkBtn();
-  };
-  reader.readAsDataURL(f);
+    toast('✅ تم رفع الملف — جاهز لإنشاء QR!', 'ok');
+
+  }).catch(function(err) {
+    clearInterval(fakeInterval);
+    progWrap.style.display = 'none';
+    showWarn(type + '-warn', '❌ خطأ: ' + (err.message || err));
+  });
 }
 
 // ============================================================
@@ -483,18 +649,14 @@ function onPdf(files) {
 function chkBtn() {
   var ok = false;
   if (cType === 'url') ok = document.getElementById('url-v').value.trim().length > 0;
-  if (cType === 'pdf') ok = pdfContent !== null;
+  if (cType === 'img') ok = uploadedURL.img !== null;
+  if (cType === 'pdf') ok = uploadedURL.pdf !== null;
   document.getElementById('gen-btn').disabled = !ok;
 }
 
 // ============================================================
-// DRAG & DROP SETUP
+// DRAG & DROP
 // ============================================================
-window.addEventListener('DOMContentLoaded', function() {
-  setupDrop('dz-pdf', function(files){ onPdf(files); });
-  setupCvtDrop('dz-word', function(files){ onWordFile(files); });
-});
-
 function setupDrop(id, cb) {
   var el = document.getElementById(id);
   if (!el) return;
@@ -511,7 +673,8 @@ function setupDrop(id, cb) {
 // ============================================================
 function getContent() {
   if (cType === 'url') return document.getElementById('proto').value + document.getElementById('url-v').value.trim();
-  if (cType === 'pdf') return pdfContent || '';
+  if (cType === 'img') return uploadedURL.img || '';
+  if (cType === 'pdf') return uploadedURL.pdf || '';
   return '';
 }
 
@@ -552,11 +715,9 @@ function generate() {
         document.getElementById('qr-ld').classList.remove('on');
         cont.style.display = 'block';
 
-        var infoMap = { url: content, pdf: '📄 PDF مُضمَّن مباشرة في QR Code' };
-        var infoTxt = infoMap[cType];
-        if (cType === 'url' && content.length > 80) infoTxt = content.slice(0,80) + '…';
+        var shortContent = content.length > 60 ? content.slice(0,60) + '…' : content;
         var infoEl = document.getElementById('qr-info');
-        infoEl.textContent = infoTxt;
+        infoEl.textContent = shortContent;
         infoEl.classList.add('on');
 
         document.getElementById('scan-ok').classList.add('on');
@@ -596,9 +757,15 @@ function resetOut() {
 function resetAll() {
   document.getElementById('url-v').value = '';
   document.getElementById('url-prev').textContent = '';
-  pdfContent = null;
-  document.getElementById('pdf-prev').classList.remove('on');
-  document.getElementById('pdf-warn').classList.remove('on');
+  uploadedURL = { img: null, pdf: null };
+  ['pdf','img'].forEach(function(t) {
+    var p = document.getElementById(t+'-prev');
+    var w = document.getElementById(t+'-warn');
+    var g = document.getElementById(t+'-prog-wrap');
+    if(p) p.classList.remove('on');
+    if(w) w.classList.remove('on');
+    if(g) g.style.display = 'none';
+  });
   resetOut();
   chkBtn();
   toast('جاهز لإنشاء QR جديد ✨', 'ok');
@@ -643,12 +810,20 @@ function dlQR() {
 // ============================================================
 // HELPERS
 // ============================================================
+function showWarn(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.classList.add('on');
+}
+function hideWarn(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('on');
+}
 function fmtSz(b) {
   if (!b || b < 1024) return (b||0) + ' B';
   if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
   return (b/1048576).toFixed(1) + ' MB';
 }
-
 function toast(m, t) {
   t = t || 'ok';
   var el = document.getElementById('toast');
