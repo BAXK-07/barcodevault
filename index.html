@@ -1279,6 +1279,8 @@
       height: auto;
       border-radius: 8px;
     }
+
+    .spinner {
       width: 36px;
       height: 36px;
       border: 3px solid rgba(108,99,255,.2);
@@ -1663,24 +1665,8 @@ let pendingSocialProvider = null;
 let pendingSocialEmail    = null;
 
 const socialProviders = {
-  google: {
-    icon: '🔵',
-    name: 'Google',
-    // Generate a realistic-looking fake Google email for demo
-    fakeEmail: () => {
-      const names = ['ahmed','sara','mohammed','layla','omar','fatima','khalid','noura'];
-      const n = names[Math.floor(Math.random()*names.length)];
-      return `${n}${Math.floor(Math.random()*9000+1000)}@gmail.com`;
-    }
-  },
-  apple: {
-    icon: '🍎',
-    name: 'Apple',
-    fakeEmail: () => {
-      const n = Math.random().toString(36).slice(2,9);
-      return `${n}@privaterelay.appleid.com`;
-    }
-  }
+  google: { icon: '🔵', name: 'Google' },
+  apple:  { icon: '🍎', name: 'Apple'  }
 };
 
 function socialLogin(provider) {
@@ -1753,11 +1739,7 @@ function closeSocialModal() {
   pendingSocialEmail    = null;
 }
 
-// Enter key in social name input
-document.addEventListener('DOMContentLoaded', () => {
-  const inp = document.getElementById('social-name-input');
-  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirmSocialLogin(); });
-});
+// Enter key in social name input — merged into single DOMContentLoaded below
 let currentUser = null;
 
 function switchAuth(tab) {
@@ -1862,11 +1844,16 @@ function doLogout() {
   document.getElementById('output-actions').classList.remove('show');
 }
 
-// Auto-login from session
-window.addEventListener('DOMContentLoaded', () => {
-  const s = DB.getSession();
-  if (s) loginUser(s);
+// ── Single DOMContentLoaded ──────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  applyTheme();
   setupDropZone();
+  // Enter key in social modal
+  var inp = document.getElementById('social-name-input');
+  if (inp) inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') confirmSocialLogin(); });
+  // Auto-login from session
+  var s = DB.getSession();
+  if (s) loginUser(s);
 });
 
 // ============================================================
@@ -2092,11 +2079,6 @@ function setupDropZone() {
 }
 
 var isTransparent = false; // kept for compatibility
-
-// init on load
-window.addEventListener('DOMContentLoaded', function() {
-  applyTheme();
-});
 
 
 // ============================================================
