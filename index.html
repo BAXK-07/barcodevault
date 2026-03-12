@@ -15,80 +15,85 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 900px 700px at 15% 15%,rgba(124,111,255,.07) 0%,transparent 60%),radial-gradient(ellipse 700px 500px at 85% 85%,rgba(255,95,160,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 900px 700px at 15% 15%,rgba(124,111,255,.07) 0%,transparent 60%),
+  radial-gradient(ellipse 700px 500px at 85% 85%,rgba(255,95,160,.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
 
 /* NAV */
 nav{background:rgba(8,8,16,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--b);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .nav-logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-logo-i{width:36px;height:36px;background:linear-gradient(135deg,var(--a),var(--a2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;animation:glw 3s ease-in-out infinite;flex-shrink:0}
-@keyframes glw{0%,100%{box-shadow:0 0 20px rgba(124,111,255,.3)}50%{box-shadow:0 0 40px rgba(124,111,255,.6)}}
-.nav-sub{font-size:12px;color:var(--t2);font-weight:400}
+.nav-logo-i{width:36px;height:36px;background:linear-gradient(135deg,var(--a),var(--a2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;animation:glw 3s ease-in-out infinite}
+@keyframes glw{0%,100%{box-shadow:0 0 20px rgba(124,111,255,.3)}50%{box-shadow:0 0 50px rgba(124,111,255,.6)}}
+.nav-sub{font-size:12px;color:var(--t2)}
 
 /* MAIN */
-main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:1}
-
-/* HERO */
+main{max-width:1060px;margin:0 auto;padding:44px 24px;position:relative;z-index:1}
 .hero{text-align:center;margin-bottom:44px}
-.hero h1{font-size:38px;font-weight:900;line-height:1.2;margin-bottom:12px;background:linear-gradient(135deg,var(--t) 0%,var(--t2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:16px;color:var(--t2);max-width:500px;margin:0 auto}
+.hero h1{font-size:36px;font-weight:900;line-height:1.2;margin-bottom:12px;background:linear-gradient(135deg,var(--t),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:15px;color:var(--t2);max-width:480px;margin:0 auto;line-height:1.7}
 
-/* TYPE GRID */
-.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-@media(max-width:640px){.type-grid{grid-template-columns:repeat(2,1fr)}}
-.type-card{background:var(--s);border:2px solid var(--b);border-radius:18px;padding:22px 14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+/* TYPE GRID — 3 cards */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:680px;margin:0 auto 36px}
+.type-card{background:var(--s);border:2px solid var(--b);border-radius:20px;padding:26px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .type-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--a),var(--a2));opacity:0;transition:opacity .2s}
-.type-card:hover{border-color:var(--a);transform:translateY(-3px);box-shadow:0 12px 32px rgba(124,111,255,.2)}
+.type-card:hover{border-color:var(--a);transform:translateY(-3px);box-shadow:0 14px 36px rgba(124,111,255,.2)}
 .type-card:hover::after{opacity:.06}
-.type-card.on{border-color:var(--a);box-shadow:0 0 0 3px rgba(124,111,255,.25),0 12px 32px rgba(124,111,255,.15)}
+.type-card.on{border-color:var(--a);box-shadow:0 0 0 3px rgba(124,111,255,.25),0 14px 36px rgba(124,111,255,.15)}
 .type-card.on::after{opacity:.1}
-.tc-ic{font-size:32px;margin-bottom:10px;position:relative;z-index:1}
-.tc-nm{font-size:14px;font-weight:700;color:var(--t);position:relative;z-index:1}
-.tc-ds{font-size:11px;color:var(--t2);margin-top:4px;position:relative;z-index:1}
+.tc-ic{font-size:34px;margin-bottom:10px;position:relative;z-index:1}
+.tc-nm{font-size:14px;font-weight:800;color:var(--t);position:relative;z-index:1}
+.tc-ds{font-size:11px;color:var(--t2);margin-top:5px;position:relative;z-index:1;line-height:1.5}
 
 /* CONVERTER */
 .conv-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:760px){.conv-grid{grid-template-columns:1fr}}
+@media(max-width:740px){.conv-grid{grid-template-columns:1fr}}
 
 .card{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:28px}
 .card-hd{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;margin-bottom:24px}
-.card-ic{width:36px;height:36px;background:rgba(124,111,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.card-ic{width:36px;height:36px;background:rgba(124,111,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 
-/* INPUT PANELS */
 .inp-panel{display:none}.inp-panel.on{display:block}
 .lbl{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:9px;display:block}
 
+/* URL */
 .url-wrap{display:flex;margin-bottom:10px}
 .proto-sel{padding:13px 12px;background:var(--s3);border:1.5px solid var(--b);border-left:none;border-radius:12px 0 0 12px;color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;cursor:pointer;transition:border-color .2s}
 .url-inp{flex:1;padding:13px 16px;background:var(--s2);border:1.5px solid var(--b);border-right:none;border-radius:0 12px 12px 0;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s}
-.url-inp:focus,.proto-sel:focus{border-color:var(--a)}
-.url-prev{font-size:12px;color:var(--a3);margin-bottom:16px;font-family:'JetBrains Mono',monospace;word-break:break-all;min-height:18px;line-height:1.5}
+.url-inp:focus{border-color:var(--a)}
+.url-prev{font-size:12px;color:var(--a3);margin-bottom:20px;font-family:'JetBrains Mono',monospace;word-break:break-all;min-height:18px;line-height:1.6}
 
-.txt-area{width:100%;padding:14px 16px;background:var(--s2);border:1.5px solid var(--b);border-radius:13px;color:var(--t);font-family:'Cairo',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:130px;transition:border-color .2s;line-height:1.7}
-.txt-area:focus{border-color:var(--a)}
-.char-c{font-size:12px;color:var(--t2);margin-bottom:16px}
-
-.drop-zone{border:2px dashed var(--b);border-radius:16px;padding:44px 20px;text-align:center;cursor:pointer;transition:all .25s;position:relative;margin-bottom:14px}
+/* DROP ZONE */
+.drop-zone{border:2px dashed var(--b);border-radius:16px;padding:38px 20px;text-align:center;cursor:pointer;transition:all .25s;position:relative;margin-bottom:14px}
 .drop-zone:hover,.drop-zone.drag{border-color:var(--a);background:rgba(124,111,255,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.dz-ic{font-size:42px;margin-bottom:12px}
+.dz-ic{font-size:40px;margin-bottom:10px}
 .dz-ti{font-size:15px;font-weight:700;margin-bottom:6px}
-.dz-sb{font-size:13px;color:var(--t2)}
+.dz-sb{font-size:12px;color:var(--t2)}
 
-.fprev{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:14px 16px;display:none;align-items:center;gap:12px;margin-bottom:14px}
+/* FILE PREVIEW */
+.fprev{background:var(--s2);border:1px solid var(--b);border-radius:13px;padding:13px 16px;display:none;align-items:center;gap:12px;margin-bottom:14px}
 .fprev.on{display:flex}
-.fprev-ic{font-size:26px;flex-shrink:0}
 .fprev-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 .fprev-mt{font-size:11px;color:var(--t2);margin-top:3px}
 
-.up-st{font-size:13px;font-weight:700;padding:10px 14px;border-radius:10px;margin-bottom:14px;display:none;align-items:center;gap:8px}
-.up-st.on{display:flex}
-.up-st.loading{background:rgba(124,111,255,.1);color:var(--a);border:1px solid rgba(124,111,255,.2)}
-.up-st.done{background:rgba(0,229,192,.1);color:var(--ok);border:1px solid rgba(0,229,192,.2)}
-.up-st.fail{background:rgba(255,95,160,.1);color:var(--err);border:1px solid rgba(255,95,160,.2)}
-.spin{display:inline-block;animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
+/* IMAGE PREVIEW */
+.img-preview-wrap{display:none;margin-bottom:14px;text-align:center}
+.img-preview-wrap.on{display:block}
+.img-preview{max-width:100%;max-height:180px;border-radius:12px;border:1px solid var(--b);object-fit:contain;background:#fff}
 
-.hint-box{background:rgba(124,111,255,.06);border:1px solid rgba(124,111,255,.14);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--t2);margin-bottom:16px;line-height:1.8}
+/* TABS inside image panel */
+.img-tabs{display:flex;background:var(--s2);border-radius:10px;padding:4px;gap:4px;margin-bottom:16px}
+.img-tab{flex:1;padding:8px;border:none;border-radius:7px;background:transparent;color:var(--t2);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.img-tab.on{background:var(--a);color:#fff}
+
+/* URL input for image */
+.plain-inp{width:100%;padding:13px 16px;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;margin-bottom:10px}
+.plain-inp:focus{border-color:var(--a)}
+
+.warn-box{background:rgba(255,190,61,.07);border:1px solid rgba(255,190,61,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--warn);margin-bottom:14px;line-height:1.8;display:none}
+.warn-box.on{display:block}
+.info-box{background:rgba(124,111,255,.07);border:1px solid rgba(124,111,255,.15);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.8}
 
 /* SIZE */
 .sz-btns{display:flex;gap:8px;margin-bottom:22px}
@@ -96,7 +101,6 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
 .sz-btn:hover{border-color:var(--a);color:var(--a)}
 .sz-btn.on{background:var(--a);border-color:var(--a);color:#fff}
 
-/* GEN BTN */
 .btn-gen{width:100%;padding:15px;background:linear-gradient(135deg,var(--a),#9b5cf6);border:none;border-radius:13px;color:#fff;font-family:'Cairo',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;box-shadow:0 6px 24px rgba(124,111,255,.4);display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-gen:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(124,111,255,.6)}
 .btn-gen:disabled{opacity:.4;cursor:not-allowed}
@@ -104,12 +108,13 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
 /* OUTPUT */
 .out-card{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:28px;display:flex;flex-direction:column;align-items:center}
 .qr-ph{width:100%;max-width:290px;aspect-ratio:1;border:2px dashed var(--b);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--t3);margin:0 auto 20px}
-.qr-ph-ic{font-size:56px;opacity:.25}
+.qr-ph-ic{font-size:52px;opacity:.22}
 .qr-ph-tx{font-size:14px;font-weight:600}
 
 .qr-ld{display:none;flex-direction:column;align-items:center;gap:16px;padding:44px 20px;color:var(--a)}
 .qr-ld.on{display:flex}
 .qr-sp{width:44px;height:44px;border:3px solid rgba(124,111,255,.2);border-top-color:var(--a);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
 #qr-cont{background:#fff;padding:16px;border-radius:16px;display:none;margin:0 auto 16px;box-shadow:0 8px 40px rgba(0,0,0,.35)}
 #qr-cont canvas,#qr-cont img{display:block!important;max-width:100%;height:auto;border-radius:6px}
@@ -129,13 +134,14 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
 .btn-dl{flex:1;padding:13px;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;color:var(--t);font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
 .btn-dl:hover{border-color:var(--a);color:var(--a)}
 .btn-new{flex:1;padding:13px;background:rgba(124,111,255,.08);border:1.5px solid rgba(124,111,255,.25);border-radius:12px;color:var(--a);font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
-.btn-new:hover{background:rgba(124,111,255,.16)}
+.btn-new:hover{background:rgba(124,111,255,.18)}
 
 /* TOAST */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--s);border:1px solid var(--b);border-radius:14px;padding:13px 28px;font-size:14px;font-weight:700;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 8px 40px rgba(0,0,0,.5)}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:rgba(0,229,192,.45);color:var(--ok)}
 .toast.bad{border-color:rgba(255,95,160,.45);color:var(--err)}
+.toast.warn{border-color:rgba(255,190,61,.45);color:var(--warn)}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -143,59 +149,50 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
   .nav-sub{display:none}
   main{padding:24px 14px}
   .hero h1{font-size:26px}
-  .hero p{font-size:14px}
-  .card{padding:20px 16px}
+  .type-grid{max-width:100%}
+  .card{padding:18px 14px}
 }
 @media(max-width:480px){
   .act-row{flex-direction:column}
-  .fmt-row .fmt-btn:last-child{display:none}
+  .type-grid{grid-template-columns:1fr 1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">
     <div class="nav-logo-i">⬛</div>
     BarcodeVault
   </div>
-  <div class="nav-sub">أنشئ QR Code حقيقي مجاناً</div>
+  <div class="nav-sub">أنشئ QR Code مجاناً</div>
 </nav>
 
 <main>
-
-  <!-- HERO -->
   <div class="hero">
     <h1>حوّل أي شيء إلى QR Code</h1>
-    <p>روابط، نصوص، ملفات، PDF — قابل للمسح فوراً من أي هاتف</p>
+    <p>روابط، صور، وملفات PDF — قابل للمسح فوراً من أي هاتف، بدون رفع على أي سيرفر</p>
   </div>
 
-  <!-- TYPE SELECTOR -->
+  <!-- 3 TYPE CARDS -->
   <div class="type-grid">
     <div class="type-card on" onclick="setType('url',this)">
       <div class="tc-ic">🔗</div>
       <div class="tc-nm">رابط URL</div>
-      <div class="tc-ds">موقع أو رابط مباشر</div>
+      <div class="tc-ds">موقع، واتساب، تيليجرام...</div>
     </div>
-    <div class="type-card" onclick="setType('text',this)">
-      <div class="tc-ic">📝</div>
-      <div class="tc-nm">نص</div>
-      <div class="tc-ds">أي نص أو رسالة</div>
-    </div>
-    <div class="type-card" onclick="setType('file',this)">
-      <div class="tc-ic">📁</div>
-      <div class="tc-nm">ملف / صورة</div>
-      <div class="tc-ds">يرفع ويعطيك رابط QR</div>
+    <div class="type-card" onclick="setType('img',this)">
+      <div class="tc-ic">🖼️</div>
+      <div class="tc-nm">صورة</div>
+      <div class="tc-ds">من الجهاز أو رابط مباشر</div>
     </div>
     <div class="type-card" onclick="setType('pdf',this)">
       <div class="tc-ic">📄</div>
       <div class="tc-nm">PDF</div>
-      <div class="tc-ds">رفع ومشاركة PDF</div>
+      <div class="tc-ds">يُحوَّل مباشرة بدون رفع</div>
     </div>
   </div>
 
-  <!-- CONVERTER -->
   <div class="conv-grid">
 
     <!-- INPUT CARD -->
@@ -205,7 +202,7 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
         <span id="inp-ti">إدخال الرابط</span>
       </div>
 
-      <!-- URL -->
+      <!-- ===== URL PANEL ===== -->
       <div class="inp-panel on" id="panel-url">
         <label class="lbl">الرابط</label>
         <div class="url-wrap">
@@ -215,64 +212,72 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
             <option>tel:</option>
             <option>mailto:</option>
             <option>sms:</option>
+            <option>https://wa.me/</option>
           </select>
           <input class="url-inp" type="text" id="url-v" placeholder="example.com" oninput="onUrl()">
         </div>
         <div class="url-prev" id="url-prev"></div>
       </div>
 
-      <!-- TEXT -->
-      <div class="inp-panel" id="panel-text">
-        <label class="lbl">النص</label>
-        <textarea class="txt-area" id="txt-v" placeholder="اكتب أي نص هنا..." oninput="onTxt(this)"></textarea>
-        <div class="char-c" id="char-c">0 / 900 حرف</div>
-      </div>
-
-      <!-- FILE -->
-      <div class="inp-panel" id="panel-file">
-        <div class="drop-zone" id="dz-file">
-          <input type="file" id="fi-inp" onchange="onFile(this.files)">
-          <div class="dz-ic">📤</div>
-          <div class="dz-ti">اسحب الملف هنا</div>
-          <div class="dz-sb">أو انقر للاختيار • جميع الصيغ</div>
+      <!-- ===== IMAGE PANEL ===== -->
+      <div class="inp-panel" id="panel-img">
+        <!-- SUB TABS: upload / url -->
+        <div class="img-tabs">
+          <button class="img-tab on" id="img-tab-upload" onclick="switchImgTab('upload')">📱 من الجهاز</button>
+          <button class="img-tab"    id="img-tab-url"    onclick="switchImgTab('url')">🔗 من رابط</button>
         </div>
-        <div class="fprev" id="fp-prev">
-          <span class="fprev-ic" id="fp-ic">📄</span>
-          <div>
-            <div class="fprev-nm" id="fp-nm">—</div>
-            <div class="fprev-mt" id="fp-mt">—</div>
+
+        <!-- Upload from device -->
+        <div id="img-upload-section">
+          <div class="drop-zone" id="dz-img">
+            <input type="file" id="img-inp" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" onchange="onImgFile(this.files)">
+            <div class="dz-ic">🖼️</div>
+            <div class="dz-ti">اسحب الصورة هنا</div>
+            <div class="dz-sb">JPG، PNG، GIF، WEBP، SVG</div>
           </div>
         </div>
-        <div class="up-st" id="up-st"></div>
-        <div class="hint-box">💡 يتم رفع الملف على <strong style="color:var(--a)">file.io</strong> مجاناً (حد 2GB) وتحصل على رابط مؤقت مباشر.</div>
+
+        <!-- URL input -->
+        <div id="img-url-section" style="display:none">
+          <label class="lbl">رابط الصورة المباشر</label>
+          <input class="plain-inp" type="url" id="img-url-v" placeholder="https://example.com/image.jpg" oninput="onImgUrl()">
+          <div class="info-box">💡 يجب أن يكون رابط مباشر ينتهي بـ jpg أو png أو gif أو webp — وليس رابط صفحة</div>
+        </div>
+
+        <!-- Preview -->
+        <div class="img-preview-wrap" id="img-prev-wrap">
+          <img id="img-preview" class="img-preview" src="" alt="معاينة الصورة">
+          <div style="font-size:12px;color:var(--t2);margin-top:8px" id="img-prev-info"></div>
+        </div>
+
+        <div class="warn-box" id="img-warn"></div>
       </div>
 
-      <!-- PDF -->
+      <!-- ===== PDF PANEL ===== -->
       <div class="inp-panel" id="panel-pdf">
         <div class="drop-zone" id="dz-pdf">
-          <input type="file" id="pdf-inp" accept=".pdf" onchange="onPdf(this.files)">
+          <input type="file" id="pdf-inp" accept=".pdf,application/pdf" onchange="onPdf(this.files)">
           <div class="dz-ic">📄</div>
           <div class="dz-ti">اسحب ملف PDF هنا</div>
-          <div class="dz-sb">PDF فقط</div>
+          <div class="dz-sb">أو انقر للاختيار • PDF فقط</div>
         </div>
-        <div class="fprev" id="pp-prev">
-          <span class="fprev-ic">📕</span>
+        <div class="fprev" id="pdf-prev">
+          <span style="font-size:26px;flex-shrink:0">📕</span>
           <div>
-            <div class="fprev-nm" id="pp-nm">—</div>
-            <div class="fprev-mt" id="pp-mt">—</div>
+            <div class="fprev-nm" id="pdf-nm">—</div>
+            <div class="fprev-mt" id="pdf-mt">—</div>
           </div>
         </div>
-        <div class="up-st" id="pdf-st"></div>
-        <div class="hint-box">💡 يتم رفع PDF على <strong style="color:var(--a)">file.io</strong> مجاناً وتحصل على رابط مباشر للعرض والتنزيل.</div>
+        <div class="warn-box" id="pdf-warn"></div>
       </div>
 
-      <!-- SIZE -->
-      <label class="lbl">حجم QR Code</label>
+      <!-- SIZE (shared) -->
+      <label class="lbl" style="margin-top:4px">حجم QR Code</label>
       <div class="sz-btns">
-        <button class="sz-btn" onclick="setSz(200,this)">200px</button>
+        <button class="sz-btn"    onclick="setSz(200,this)">200px</button>
         <button class="sz-btn on" onclick="setSz(300,this)">300px</button>
-        <button class="sz-btn" onclick="setSz(400,this)">400px</button>
-        <button class="sz-btn" onclick="setSz(500,this)">500px</button>
+        <button class="sz-btn"    onclick="setSz(400,this)">400px</button>
+        <button class="sz-btn"    onclick="setSz(500,this)">500px</button>
       </div>
 
       <button class="btn-gen" id="gen-btn" disabled onclick="generate()">
@@ -307,13 +312,13 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
 
       <div class="fmt-row" id="fmt-row" style="display:none">
         <button class="fmt-btn on" onclick="setFmt('png',this)">PNG</button>
-        <button class="fmt-btn" onclick="setFmt('svg',this)">SVG</button>
-        <button class="fmt-btn" onclick="setFmt('pdf',this)">PDF طباعة</button>
+        <button class="fmt-btn"    onclick="setFmt('svg',this)">SVG</button>
+        <button class="fmt-btn"    onclick="setFmt('print',this)">طباعة</button>
       </div>
 
       <div class="act-row" id="act-row" style="display:none">
         <button class="btn-dl" id="dl-btn" onclick="dlQR()">⬇ تنزيل PNG</button>
-        <button class="btn-new" onclick="resetAll()">✨ إنشاء جديد</button>
+        <button class="btn-new" onclick="resetAll()">✨ جديد</button>
       </div>
     </div>
 
@@ -323,237 +328,401 @@ main{max-width:1100px;margin:0 auto;padding:40px 24px;position:relative;z-index:
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== STATE =====
-let cType='url', qSz=300, cFmt='png', lastURL=null, lastCvs=null, fileUrl=null;
+// ============================================================
+// STATE
+// ============================================================
+var cType      = 'url';
+var qSz        = 300;
+var cFmt       = 'png';
+var lastURL    = null;
+var lastCvs    = null;
+var pdfContent = null;   // base64 dataURL للـ PDF
+var imgContent = null;   // base64 dataURL أو URL للصورة
+var imgMode    = 'upload'; // 'upload' أو 'url'
 
-const TYPES={
-  url:{ti:'إدخال الرابط',ic:'🔗'},
-  text:{ti:'إدخال النص',ic:'📝'},
-  file:{ti:'رفع الملف',ic:'📁'},
-  pdf:{ti:'رفع PDF',ic:'📄'}
-};
-
-// ===== TYPE SELECTION =====
-function setType(t,el){
-  cType=t; fileUrl=null;
-  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('on'));
+// ============================================================
+// TYPE SELECTION
+// ============================================================
+function setType(t, el) {
+  cType = t;
+  pdfContent = null;
+  imgContent = null;
+  document.querySelectorAll('.type-card').forEach(function(c){ c.classList.remove('on'); });
   el.classList.add('on');
-  document.querySelectorAll('.inp-panel').forEach(p=>p.classList.remove('on'));
-  document.getElementById('panel-'+t).classList.add('on');
-  document.getElementById('inp-ti').textContent=TYPES[t].ti;
-  document.getElementById('inp-ic').textContent=TYPES[t].ic;
-  resetOut(); chkBtn();
-}
-
-function setSz(s,el){
-  qSz=s;
-  document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-}
-
-function setFmt(f,el){
-  cFmt=f;
-  document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  document.getElementById('dl-btn').textContent='⬇ تنزيل '+f.toUpperCase();
-}
-
-// ===== INPUTS =====
-function onUrl(){
-  const v=document.getElementById('url-v').value.trim();
-  const p=document.getElementById('proto').value;
-  document.getElementById('url-prev').textContent=v?p+v:'';
+  document.querySelectorAll('.inp-panel').forEach(function(p){ p.classList.remove('on'); });
+  document.getElementById('panel-' + t).classList.add('on');
+  var titles = { url:'إدخال الرابط', img:'إضافة صورة', pdf:'رفع PDF' };
+  var icons  = { url:'🔗', img:'🖼️', pdf:'📄' };
+  document.getElementById('inp-ti').textContent = titles[t];
+  document.getElementById('inp-ic').textContent = icons[t];
+  resetOut();
   chkBtn();
 }
 
-function onTxt(el){
-  const l=el.value.length;
-  document.getElementById('char-c').textContent=l+' / 900 حرف';
-  el.style.borderColor=l>900?'var(--err)':'';
+function setSz(s, el) {
+  qSz = s;
+  document.querySelectorAll('.sz-btn').forEach(function(b){ b.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+function setFmt(f, el) {
+  cFmt = f;
+  document.querySelectorAll('.fmt-btn').forEach(function(b){ b.classList.remove('on'); });
+  el.classList.add('on');
+  var labels = { png:'⬇ تنزيل PNG', svg:'⬇ تنزيل SVG', print:'🖨 طباعة' };
+  document.getElementById('dl-btn').textContent = labels[f];
+}
+
+// ============================================================
+// URL
+// ============================================================
+function onUrl() {
+  var v = document.getElementById('url-v').value.trim();
+  var p = document.getElementById('proto').value;
+  document.getElementById('url-prev').textContent = v ? p + v : '';
   chkBtn();
 }
 
-function chkBtn(){
-  let ok=false;
-  if(cType==='url') ok=document.getElementById('url-v').value.trim().length>0;
-  if(cType==='text')ok=document.getElementById('txt-v').value.trim().length>0&&document.getElementById('txt-v').value.length<=900;
-  if(cType==='file'||cType==='pdf') ok=fileUrl!==null;
-  document.getElementById('gen-btn').disabled=!ok;
+// ============================================================
+// IMAGE — SUB TABS
+// ============================================================
+function switchImgTab(mode) {
+  imgMode = mode;
+  imgContent = null;
+  document.getElementById('img-tab-upload').classList.toggle('on', mode === 'upload');
+  document.getElementById('img-tab-url').classList.toggle('on',    mode === 'url');
+  document.getElementById('img-upload-section').style.display = mode === 'upload' ? 'block' : 'none';
+  document.getElementById('img-url-section').style.display    = mode === 'url'    ? 'block' : 'none';
+  document.getElementById('img-prev-wrap').classList.remove('on');
+  document.getElementById('img-warn').classList.remove('on');
+  document.getElementById('img-url-v').value = '';
+  chkBtn();
 }
 
-// ===== FILE UPLOAD =====
-const FIC={pdf:'📕',doc:'📘',docx:'📘',xls:'📗',xlsx:'📗',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',webp:'🖼️',mp4:'🎬',mp3:'🎵',zip:'📦',rar:'📦',txt:'📝',html:'🌐',js:'⚙️',py:'🐍'};
+// --- رفع من الجهاز ---
+function onImgFile(files) {
+  var f = files[0];
+  if (!f) return;
 
-function fIc(e){return FIC[e.toLowerCase()]||'📄';}
-function fmtSz(b){if(!b||b<1024)return(b||0)+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
-
-function setupDrop(id,cb){
-  const z=document.getElementById(id); if(!z)return;
-  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag');});
-  z.addEventListener('dragleave',()=>z.classList.remove('drag'));
-  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag');if(e.dataTransfer.files[0])cb(e.dataTransfer.files);});
-}
-
-async function upload(file,statId,prevId,nmId,mtId,icId){
-  const stat=document.getElementById(statId);
-  const prev=document.getElementById(prevId);
-  if(prev){
-    const ext=file.name.split('.').pop();
-    document.getElementById(nmId).textContent=file.name;
-    document.getElementById(mtId).textContent=fmtSz(file.size)+' • '+ext.toUpperCase();
-    if(icId)document.getElementById(icId).textContent=fIc(ext);
-    prev.classList.add('on');
+  var allowed = ['image/jpeg','image/png','image/gif','image/webp','image/svg+xml'];
+  if (allowed.indexOf(f.type) === -1) {
+    showImgWarn('نوع الملف غير مدعوم. يرجى اختيار JPG أو PNG أو GIF أو WEBP أو SVG');
+    imgContent = null; chkBtn(); return;
   }
-  stat.className='up-st loading on';
-  stat.innerHTML='<span class="spin">⟳</span> جاري الرفع على file.io...';
-  try{
-    const fd=new FormData(); fd.append('file',file);
-    const r=await fetch('https://file.io',{method:'POST',body:fd});
-    const j=await r.json();
-    if(j.success&&j.link){
-      stat.className='up-st done on';
-      stat.innerHTML='✅ تم الرفع! الرابط جاهز';
-      fileUrl=j.link; chkBtn(); return j.link;
-    } else throw new Error(j.message||'فشل الرفع');
-  }catch(e){
-    stat.className='up-st fail on';
-    stat.innerHTML='❌ '+e.message+' — تحقق من الاتصال وأعد المحاولة';
-    fileUrl=null; chkBtn(); return null;
+
+  var MAX_IMG = 2 * 1024 * 1024; // 2MB
+  if (f.size > MAX_IMG) {
+    showImgWarn('⚠️ الصورة كبيرة جداً (' + fmtSz(f.size) + '). الحد الأقصى 2MB. ضغّط الصورة أولاً.');
+    imgContent = null; chkBtn(); return;
   }
+
+  hideImgWarn();
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgContent = e.target.result; // data:image/...;base64,...
+    showImgPreview(imgContent, f.name + ' — ' + fmtSz(f.size));
+    chkBtn();
+    toast('✅ الصورة جاهزة للتحويل', 'ok');
+  };
+  reader.onerror = function() {
+    showImgWarn('❌ فشل قراءة الصورة، حاول مرة أخرى');
+    imgContent = null; chkBtn();
+  };
+  reader.readAsDataURL(f);
 }
 
-function onFile(files){
-  const f=files[0]; if(!f)return;
-  fileUrl=null;
-  upload(f,'up-st','fp-prev','fp-nm','fp-mt','fp-ic');
+// --- من رابط ---
+function onImgUrl() {
+  var v = document.getElementById('img-url-v').value.trim();
+  imgContent = null;
+  hideImgWarn();
+  document.getElementById('img-prev-wrap').classList.remove('on');
+
+  if (!v) { chkBtn(); return; }
+
+  // تحقق أن الرابط يبدأ بـ http
+  if (!v.startsWith('http://') && !v.startsWith('https://')) {
+    showImgWarn('يجب أن يبدأ الرابط بـ https://');
+    chkBtn(); return;
+  }
+
+  // معاينة الصورة من الرابط
+  var testImg = new Image();
+  testImg.crossOrigin = 'anonymous';
+  testImg.onload = function() {
+    // تحويل الصورة لـ base64 عبر canvas
+    var canvas = document.createElement('canvas');
+    canvas.width  = testImg.naturalWidth;
+    canvas.height = testImg.naturalHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(testImg, 0, 0);
+    try {
+      imgContent = canvas.toDataURL('image/png');
+      showImgPreview(imgContent, 'من رابط: ' + v.slice(0, 50) + (v.length > 50 ? '…' : ''));
+      chkBtn();
+      toast('✅ الصورة محمّلة من الرابط', 'ok');
+    } catch(err) {
+      // CORS error — استخدم الرابط مباشرة
+      imgContent = v;
+      showImgPreview(v, 'رابط مباشر: ' + v.slice(0, 50));
+      chkBtn();
+      toast('✅ سيتم استخدام الرابط مباشرة', 'warn');
+    }
+  };
+  testImg.onerror = function() {
+    showImgWarn('❌ تعذّر تحميل الصورة من هذا الرابط. تأكد أن الرابط صحيح ومباشر.');
+    imgContent = null; chkBtn();
+  };
+  testImg.src = v;
 }
 
-function onPdf(files){
-  const f=files[0]; if(!f)return;
-  if(!f.name.toLowerCase().endsWith('.pdf')){toast('يرجى اختيار ملف PDF فقط','bad');return;}
-  fileUrl=null;
-  upload(f,'pdf-st','pp-prev','pp-nm','pp-mt',null);
+function showImgPreview(src, info) {
+  var wrap = document.getElementById('img-prev-wrap');
+  var img  = document.getElementById('img-preview');
+  img.src  = src;
+  document.getElementById('img-prev-info').textContent = info || '';
+  wrap.classList.add('on');
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  setupDrop('dz-file',files=>onFile(files));
-  setupDrop('dz-pdf', files=>onPdf(files));
+function showImgWarn(msg) {
+  var el = document.getElementById('img-warn');
+  el.textContent = msg;
+  el.classList.add('on');
+}
+
+function hideImgWarn() {
+  document.getElementById('img-warn').classList.remove('on');
+}
+
+// ============================================================
+// PDF
+// ============================================================
+function onPdf(files) {
+  var f = files[0];
+  if (!f) return;
+
+  if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) {
+    toast('يرجى اختيار ملف PDF فقط', 'bad');
+    return;
+  }
+
+  var MAX_PDF = 2 * 1024 * 1024; // 2MB
+  document.getElementById('pdf-nm').textContent = f.name;
+  document.getElementById('pdf-mt').textContent = fmtSz(f.size) + ' • PDF';
+  document.getElementById('pdf-prev').classList.add('on');
+
+  var warn = document.getElementById('pdf-warn');
+  if (f.size > MAX_PDF) {
+    warn.textContent = '⚠️ الملف كبير جداً (' + fmtSz(f.size) + '). الحد الأقصى للـ PDF هو 2MB.';
+    warn.classList.add('on');
+    pdfContent = null; chkBtn(); return;
+  }
+
+  warn.classList.remove('on');
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    pdfContent = e.target.result;
+    chkBtn();
+    toast('✅ PDF جاهز للتحويل', 'ok');
+  };
+  reader.onerror = function() {
+    toast('❌ فشل قراءة الملف', 'bad');
+    pdfContent = null; chkBtn();
+  };
+  reader.readAsDataURL(f);
+}
+
+// ============================================================
+// CHECK BUTTON
+// ============================================================
+function chkBtn() {
+  var ok = false;
+  if (cType === 'url') ok = document.getElementById('url-v').value.trim().length > 0;
+  if (cType === 'img') ok = imgContent !== null;
+  if (cType === 'pdf') ok = pdfContent !== null;
+  document.getElementById('gen-btn').disabled = !ok;
+}
+
+// ============================================================
+// DRAG & DROP SETUP
+// ============================================================
+window.addEventListener('DOMContentLoaded', function() {
+  setupDrop('dz-img', function(files){ onImgFile(files); });
+  setupDrop('dz-pdf', function(files){ onPdf(files); });
 });
 
-// ===== QR GENERATION =====
-function getContent(){
-  if(cType==='url') return document.getElementById('proto').value+document.getElementById('url-v').value.trim();
-  if(cType==='text')return document.getElementById('txt-v').value.trim();
-  return fileUrl||'';
+function setupDrop(id, cb) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('drag'); });
+  el.addEventListener('dragleave', function(){ el.classList.remove('drag'); });
+  el.addEventListener('drop', function(e){
+    e.preventDefault(); el.classList.remove('drag');
+    if (e.dataTransfer.files[0]) cb(e.dataTransfer.files);
+  });
 }
 
-function generate(){
-  const content=getContent(); if(!content)return;
+// ============================================================
+// QR GENERATION
+// ============================================================
+function getContent() {
+  if (cType === 'url') return document.getElementById('proto').value + document.getElementById('url-v').value.trim();
+  if (cType === 'img') return imgContent || '';
+  if (cType === 'pdf') return pdfContent || '';
+  return '';
+}
 
-  document.getElementById('qr-ph').style.display='none';
-  document.getElementById('qr-cont').style.display='none';
-  document.getElementById('qr-cont').innerHTML='';
+function generate() {
+  var content = getContent();
+  if (!content) return;
+
+  document.getElementById('qr-ph').style.display   = 'none';
+  document.getElementById('qr-cont').style.display = 'none';
+  document.getElementById('qr-cont').innerHTML     = '';
   document.getElementById('qr-info').classList.remove('on');
   document.getElementById('scan-ok').classList.remove('on');
-  document.getElementById('fmt-row').style.display='none';
-  document.getElementById('act-row').style.display='none';
+  document.getElementById('fmt-row').style.display = 'none';
+  document.getElementById('act-row').style.display = 'none';
   document.getElementById('qr-ld').classList.add('on');
 
-  setTimeout(()=>{
-    try{
-      const cont=document.getElementById('qr-cont');
-      cont.innerHTML='';
-      new QRCode(cont,{
-        text:content,
-        width:qSz, height:qSz,
-        colorDark:'#000000',
-        colorLight:'#ffffff',
-        correctLevel:QRCode.CorrectLevel.M
+  setTimeout(function() {
+    try {
+      var cont = document.getElementById('qr-cont');
+      cont.innerHTML = '';
+
+      new QRCode(cont, {
+        text: content,
+        width: qSz,
+        height: qSz,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
       });
-      setTimeout(()=>{
-        const cvs=cont.querySelector('canvas');
-        if(!cvs){qrErr('فشل إنشاء QR — حاول مرة أخرى');return;}
-        cvs.style.cssText='max-width:100%;height:auto;display:block;border-radius:6px';
-        lastCvs=cvs; lastURL=cvs.toDataURL('image/png');
+
+      setTimeout(function() {
+        var cvs = cont.querySelector('canvas');
+        if (!cvs) { qrErr('فشل إنشاء QR، حاول مرة أخرى'); return; }
+        cvs.style.cssText = 'max-width:100%;height:auto;display:block;border-radius:6px';
+        lastCvs = cvs;
+        lastURL = cvs.toDataURL('image/png');
+
         document.getElementById('qr-ld').classList.remove('on');
-        cont.style.display='block';
-        const info=document.getElementById('qr-info');
-        info.textContent=content.length>90?content.slice(0,90)+'…':content;
-        info.classList.add('on');
+        cont.style.display = 'block';
+
+        var infoMap = { url: content, img: '🖼️ صورة مُضمَّنة مباشرة في QR Code', pdf: '📄 PDF مُضمَّن مباشرة في QR Code' };
+        var infoTxt = infoMap[cType];
+        if (cType === 'url' && content.length > 80) infoTxt = content.slice(0,80) + '…';
+        var infoEl = document.getElementById('qr-info');
+        infoEl.textContent = infoTxt;
+        infoEl.classList.add('on');
+
         document.getElementById('scan-ok').classList.add('on');
-        document.getElementById('fmt-row').style.display='flex';
-        document.getElementById('act-row').style.display='flex';
-        toast('✅ QR جاهز — امسحه بهاتفك!','ok');
-      },300);
-    }catch(e){qrErr(e.message||'خطأ غير معروف');}
-  },500);
+        document.getElementById('fmt-row').style.display = 'flex';
+        document.getElementById('act-row').style.display = 'flex';
+
+        toast('✅ QR جاهز — امسحه بهاتفك!', 'ok');
+      }, 300);
+
+    } catch(e) {
+      qrErr((e && e.message) ? e.message : 'خطأ في الإنشاء');
+    }
+  }, 500);
 }
 
-function qrErr(m){
+function qrErr(m) {
   document.getElementById('qr-ld').classList.remove('on');
-  document.getElementById('qr-ph').style.display='flex';
-  toast('❌ '+m,'bad');
+  document.getElementById('qr-ph').style.display = 'flex';
+  toast('❌ ' + m, 'bad');
 }
 
-function resetOut(){
-  lastURL=null; lastCvs=null;
-  const c=document.getElementById('qr-cont');
-  c.innerHTML=''; c.style.display='none';
-  document.getElementById('qr-ph').style.display='flex';
+// ============================================================
+// RESET
+// ============================================================
+function resetOut() {
+  lastURL = null; lastCvs = null;
+  var c = document.getElementById('qr-cont');
+  c.innerHTML = ''; c.style.display = 'none';
+  document.getElementById('qr-ph').style.display   = 'flex';
   document.getElementById('qr-info').classList.remove('on');
   document.getElementById('scan-ok').classList.remove('on');
-  document.getElementById('fmt-row').style.display='none';
-  document.getElementById('act-row').style.display='none';
+  document.getElementById('fmt-row').style.display  = 'none';
+  document.getElementById('act-row').style.display  = 'none';
   document.getElementById('qr-ld').classList.remove('on');
 }
 
-function resetAll(){
-  // reset inputs
-  document.getElementById('url-v').value='';
-  document.getElementById('txt-v').value='';
-  document.getElementById('url-prev').textContent='';
-  document.getElementById('char-c').textContent='0 / 900 حرف';
-  fileUrl=null;
-  document.querySelectorAll('.up-st').forEach(s=>{s.className='up-st';s.innerHTML='';});
-  document.querySelectorAll('.fprev').forEach(p=>p.classList.remove('on'));
-  resetOut(); chkBtn();
-  toast('جاهز لإنشاء QR جديد ✨','ok');
+function resetAll() {
+  // reset URL
+  document.getElementById('url-v').value = '';
+  document.getElementById('url-prev').textContent = '';
+  // reset image
+  imgContent = null;
+  document.getElementById('img-prev-wrap').classList.remove('on');
+  document.getElementById('img-warn').classList.remove('on');
+  document.getElementById('img-url-v').value = '';
+  switchImgTab('upload');
+  // reset PDF
+  pdfContent = null;
+  document.getElementById('pdf-prev').classList.remove('on');
+  document.getElementById('pdf-warn').classList.remove('on');
+  resetOut();
+  chkBtn();
+  toast('جاهز لإنشاء QR جديد ✨', 'ok');
 }
 
-// ===== DOWNLOAD =====
-function dlQR(){
-  if(!lastURL)return;
-  const nm='barcodevault_qr_'+Date.now();
-  if(cFmt==='png'){
-    const a=document.createElement('a'); a.href=lastURL; a.download=nm+'.png'; a.click();
-    toast('تم تنزيل PNG ✅','ok');
-  } else if(cFmt==='svg'){
-    if(!lastCvs)return;
-    const sz=lastCvs.width;
-    const d=lastCvs.getContext('2d').getImageData(0,0,sz,sz).data;
-    let r='';
-    for(let y=0;y<sz;y++)for(let x=0;x<sz;x++){
-      const i=(y*sz+x)*4;
-      if(d[i+3]>128&&d[i]<128)r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
-    }
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${sz} ${sz}"><rect width="${sz}" height="${sz}" fill="#fff"/><g fill="#000">${r}</g></svg>`;
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
-    a.download=nm+'.svg'; a.click();
-    toast('تم تنزيل SVG ✅','ok');
+// ============================================================
+// DOWNLOAD
+// ============================================================
+function dlQR() {
+  if (!lastURL) return;
+  var nm = 'barcodevault_' + cType + '_' + Date.now();
+
+  if (cFmt === 'png') {
+    var a = document.createElement('a');
+    a.href = lastURL; a.download = nm + '.png'; a.click();
+    toast('تم تنزيل PNG ✅', 'ok');
+
+  } else if (cFmt === 'svg') {
+    if (!lastCvs) return;
+    var sz = lastCvs.width;
+    var d  = lastCvs.getContext('2d').getImageData(0, 0, sz, sz).data;
+    var r  = '';
+    for (var y = 0; y < sz; y++)
+      for (var x = 0; x < sz; x++) {
+        var i = (y * sz + x) * 4;
+        if (d[i+3] > 128 && d[i] < 128) r += '<rect x="'+x+'" y="'+y+'" width="1" height="1"/>';
+      }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+sz+' '+sz+'"><rect width="'+sz+'" height="'+sz+'" fill="#fff"/><g fill="#000">'+r+'</g></svg>';
+    var a2 = document.createElement('a');
+    a2.href = URL.createObjectURL(new Blob([svg], {type:'image/svg+xml'}));
+    a2.download = nm + '.svg'; a2.click();
+    toast('تم تنزيل SVG ✅', 'ok');
+
   } else {
-    const w=window.open('','_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>QR Code</title><style>body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff}img{width:180mm;height:180mm}@media print{@page{margin:15mm}}</style></head><body><img src="${lastURL}"><script>window.onload=()=>window.print()<\/script></body></html>`);
+    var w = window.open('', '_blank');
+    w.document.write('<!DOCTYPE html><html><head><title>QR</title><style>body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff}img{width:180mm;height:180mm}@media print{@page{margin:15mm}}</style></head><body><img src="'+lastURL+'"><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>');
     w.document.close();
-    toast('فُتح للطباعة ✅','ok');
+    toast('فُتح للطباعة ✅', 'ok');
   }
 }
 
-// ===== TOAST =====
-function toast(m,t='ok'){
-  const el=document.getElementById('toast');
-  el.textContent=m; el.className='toast on '+t;
-  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),3200);
+// ============================================================
+// HELPERS
+// ============================================================
+function fmtSz(b) {
+  if (!b || b < 1024) return (b||0) + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+function toast(m, t) {
+  t = t || 'ok';
+  var el = document.getElementById('toast');
+  el.textContent = m;
+  el.className = 'toast on ' + t;
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('on'); }, 3200);
 }
 </script>
 </body>
