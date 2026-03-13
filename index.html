@@ -529,16 +529,6 @@ function onFileUpload(files, type) {
 }
 
 function uploadToSupabase(file, type) {
-  if (!supabase) {
-    var lib = window.supabase || window.supabaseJs || window.Supabase;
-    if (lib && lib.createClient) {
-      supabase = lib.createClient(SUPA_URL, SUPA_KEY);
-    } else {
-      showWarn(type + '-warn', '❌ لم يتم الاتصال بالسيرفر — أعد تحميل الصفحة');
-      return;
-    }
-  }
-
   var progWrap = document.getElementById(type + '-prog-wrap');
   var progBar  = document.getElementById(type + '-prog-bar');
   var progPct  = document.getElementById(type + '-prog-pct');
